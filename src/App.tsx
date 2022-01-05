@@ -1,6 +1,6 @@
 import { css, Global } from '@emotion/react'
-import Editor, { useMonaco } from '@monaco-editor/react'
-import React, { useEffect } from 'react'
+import Editor, { EditorProps, useMonaco } from '@monaco-editor/react'
+import React, { useEffect, useRef } from 'react'
 import 'ress'
 import figmaTypings from '@/src/assets/figma.dts'
 
@@ -8,6 +8,17 @@ const App: React.FC = () => {
   const monaco = useMonaco()
 
   const defaultValue = ["// Let's type 'figma'", ''].join('\n')
+
+  const editorRef = useRef(null)
+
+  function handleEditorDidMount(editor, monaco) {
+    editorRef.current = editor as Editor
+  }
+
+  function showValue() {
+    if (!editorRef.current) return
+    alert(editorRef.current.getValue())
+  }
 
   useEffect(() => {
     console.log('App mounted')
@@ -65,11 +76,13 @@ const App: React.FC = () => {
         `}
       >
         <Editor
-          height="100%"
+          height="90vh"
           defaultLanguage="typescript"
           defaultValue={defaultValue}
           theme="vs-dark"
+          onMount={handleEditorDidMount}
         />
+        <button onClick={showValue}>Show value</button>
       </div>
     </>
   )

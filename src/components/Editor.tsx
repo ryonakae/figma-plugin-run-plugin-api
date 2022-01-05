@@ -1,12 +1,18 @@
-import ReactMonacoEditor, { Monaco } from '@monaco-editor/react'
+import { css } from '@emotion/react'
+import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
 import * as MonacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useEffect, useRef } from 'react'
 import 'ress'
 import { transpile } from 'typescript'
 import figmaTypings from '@/src/assets/figma.dts'
-import { css } from '@emotion/react'
 
 type EditorProps = JSX.IntrinsicElements['div']
+
+loader.config({
+  paths: {
+    vs: 'monaco-editor/min/vs'
+  }
+})
 
 const editorOptions: MonacoEditor.editor.IStandaloneEditorConstructionOptions =
   {

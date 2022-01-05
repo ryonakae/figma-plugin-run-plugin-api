@@ -1,6 +1,6 @@
 import { resolve } from 'path'
-import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 import { viteSingleFile } from 'vite-plugin-singlefile'
 
 // https://vitejs.dev/config/
@@ -10,10 +10,7 @@ export default defineConfig({
       '@': resolve(__dirname, '.')
     }
   },
-  plugins: [
-    react(),
-    viteSingleFile(),
-  ],
+  plugins: [react(), viteSingleFile()],
   build: {
     cssCodeSplit: false,
     assetsInlineLimit: 999999999,

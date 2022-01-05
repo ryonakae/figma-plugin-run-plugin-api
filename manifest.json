@@ -2,10 +2,7 @@
   "name": "Figma Plugin by Vite + React + TypeScript",
   "id": "1060426031891010393",
   "api": "1.0.0",
-  "editorType": [
-    "figma",
-    "figjam"
-  ],
+  "editorType": ["figma", "figjam"],
   "main": "dist/code.js",
   "ui": "dist/index.html"
 }

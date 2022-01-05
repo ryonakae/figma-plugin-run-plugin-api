@@ -10,7 +10,15 @@ export default defineConfig({
       '@': resolve(__dirname, '.')
     }
   },
-  plugins: [react(), viteSingleFile()],
+  plugins: [
+    react({
+      jsxImportSource: '@emotion/react',
+      babel: {
+        plugins: ['@emotion/babel-plugin']
+      }
+    }),
+    viteSingleFile()
+  ],
   build: {
     cssCodeSplit: false,
     assetsInlineLimit: 999999999,

@@ -36,14 +36,7 @@ const editorOptions: MonacoEditor.editor.IStandaloneEditorConstructionOptions =
     wordWrap: 'bounded'
   }
 
-const defaultValue = [
-  "// Let's type 'figma'",
-  'function greeter(person: string) {',
-  '  alert(`Hello, ${person}!`);',
-  '}',
-  "const user: string = 'John'",
-  'greeter(user);'
-].join('\n')
+const defaultValue = ["// Let's type 'figma'", ''].join('\n')
 
 const Editor: React.FC<EditorProps> = props => {
   const editorRef = useRef<MonacoEditor.editor.IStandaloneCodeEditor>()

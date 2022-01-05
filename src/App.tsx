@@ -20,7 +20,7 @@ const App: React.FC = () => {
       />
       <div
         css={css`
-          background-color: gray;
+          // background-color: gray;
           display: flex;
           flex-direction: column;
           height: 100%;
@@ -28,7 +28,7 @@ const App: React.FC = () => {
       >
         <Editor
           css={css`
-            height: 90vh;
+            height: 85vh;
           `}
         />
       </div>

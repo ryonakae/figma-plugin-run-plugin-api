@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react'
 import 'ress'
 import { transpile } from 'typescript'
 import figmaTypings from '@/src/assets/figma.dts'
+import { css } from '@emotion/react'
 
 type EditorProps = JSX.IntrinsicElements['div']
 
@@ -80,23 +81,27 @@ const Editor: React.FC<EditorProps> = props => {
     monaco.editor.createModel(libSource, 'typescript', monaco.Uri.parse(libUri))
   }
 
-  function transpileToJS() {
+  function exec() {
     if (!editorRef.current) return
+
+    console.log('exec')
 
     const tsCode = editorRef.current.getValue()
     console.log(tsCode)
-
     const jsCode = transpile(tsCode)
     console.log(jsCode)
 
-    runJS(jsCode)
-  }
-
-  function runJS(jsCode: string) {
-    console.clear()
-    requestAnimationFrame(() => {
-      eval(jsCode)
-    })
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'exec',
+          data: {
+            jsCode
+          }
+        }
+      },
+      '*'
+    )
   }
 
   useEffect(() => {
@@ -113,7 +118,19 @@ const Editor: React.FC<EditorProps> = props => {
         line={2}
         options={editorOptions}
       />
-      <button onClick={transpileToJS}>exec</button>
+      <button
+        onClick={exec}
+        css={css`
+          background-color: blue;
+          color: white;
+          padding: 5px 10px;
+          border-radius: 4px;
+          margin-top: 10px;
+          margin-left: 10px;
+        `}
+      >
+        exec
+      </button>
     </div>
   )
 }

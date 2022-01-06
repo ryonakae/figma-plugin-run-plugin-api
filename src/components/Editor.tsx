@@ -10,7 +10,8 @@ type EditorProps = JSX.IntrinsicElements['div']
 
 loader.config({
   paths: {
-    vs: 'monaco-editor/min/vs'
+    // vs: 'https://file.brdr.jp/figma-plugin-run-plugin-api/vs'
+    vs: 'https://wonderful-newton-c6b380.netlify.app/vs'
   }
 })
 

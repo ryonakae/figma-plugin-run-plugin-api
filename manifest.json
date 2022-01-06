@@ -1,5 +1,5 @@
 {
-  "name": "Exec Command",
+  "name": "Run Plugin API",
   "id": "1060426031891010393",
   "api": "1.0.0",
   "editorType": ["figma", "figjam"],

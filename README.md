@@ -1,1 +1,1 @@
-# figma-plugin-exec-command
+# Run Plugin API Figma Plugin

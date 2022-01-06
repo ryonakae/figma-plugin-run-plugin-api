@@ -4,6 +4,7 @@ import * as MonacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useEffect, useRef } from 'react'
 import 'ress'
 import { transpile } from 'typescript'
+import { PluginMessage, PostMessage } from '@/@types/common'
 import figmaTypings from '@/src/assets/figma.dts'
 
 type EditorProps = JSX.IntrinsicElements['div']
@@ -91,17 +92,11 @@ const Editor: React.FC<EditorProps> = props => {
     const jsCode = transpile(tsCode)
     console.log(jsCode)
 
-    parent.postMessage(
-      {
-        pluginMessage: {
-          type: 'exec',
-          data: {
-            jsCode
-          }
-        }
-      },
-      '*'
-    )
+    const pluginMessage: PluginMessage = {
+      type: 'exec',
+      code: jsCode
+    }
+    parent.postMessage({ pluginMessage } as PostMessage, '*')
   }
 
   useEffect(() => {

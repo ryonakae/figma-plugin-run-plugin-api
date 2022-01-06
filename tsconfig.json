@@ -22,6 +22,12 @@
     },
     "types": ["@types/node", "@figma/plugin-typings"]
   },
-  "include": ["src", ".eslintrc.js", ".prettierrc.js", "vite.config.ts"],
+  "include": [
+    "src",
+    ".eslintrc.js",
+    ".prettierrc.js",
+    "vite.config.ts",
+    "@types"
+  ],
   "exclude": ["node_modules", "dist"]
 }

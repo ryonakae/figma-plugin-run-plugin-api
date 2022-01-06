@@ -1,11 +1,30 @@
 import { css, Global } from '@emotion/react'
 import React, { useEffect } from 'react'
 import 'ress'
+import { PluginMessage, PostMessage } from '@/@types/common'
 import Editor from '@/src/components/Editor'
 
 const App: React.FC = () => {
+  function onKeyDown(event: KeyboardEvent): void {
+    console.log('onKeyDown', event.keyCode)
+    // esc
+    if (event.keyCode === 27) {
+      const pluginMessage: PluginMessage = {
+        type: 'close-plugin'
+      }
+      parent.postMessage({ pluginMessage } as PostMessage, '*')
+    }
+    // cmd + enter
+    // else if ((event.metaKey || event.ctrlKey) && event.keyCode == 13) {}
+  }
+
   useEffect(() => {
     console.log('App mounted')
+    document.addEventListener('keydown', onKeyDown, { passive: true })
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+    }
   }, [])
 
   return (

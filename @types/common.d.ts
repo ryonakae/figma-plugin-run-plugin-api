@@ -2,6 +2,8 @@ import * as MonacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 
 type Options = {
   editorOptions: MonacoEditor.editor.IStandaloneEditorConstructionOptions
+  code: string
+  cursorPosition: MonacoEditor.IPosition | MonacoEditor.Position
 }
 
 type ClosePluginMessage = {
@@ -9,19 +11,14 @@ type ClosePluginMessage = {
 }
 type GetOptionsMessage = {
   type: 'get-options'
+}
+type GetOptionsSuccessMessage = {
+  type: 'get-options-success'
   options: Options
 }
 type SetOptionsMessage = {
   type: 'set-options'
   options: Options
-}
-type GetCodeMessage = {
-  type: 'get-code'
-  code: string
-}
-type SetCodeMessage = {
-  type: 'set-code'
-  code: string
 }
 type ExecMessage = {
   type: 'exec'
@@ -31,9 +28,8 @@ type ExecMessage = {
 type PluginMessage =
   | ClosePluginMessage
   | GetOptionsMessage
+  | GetOptionsSuccessMessage
   | SetOptionsMessage
-  | GetCodeMessage
-  | SetCodeMessage
   | ExecMessage
 
 type PostMessage = {

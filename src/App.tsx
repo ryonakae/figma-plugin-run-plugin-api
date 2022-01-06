@@ -1,28 +1,35 @@
 import { css, Global } from '@emotion/react'
 import React, { useEffect } from 'react'
 import 'ress'
-import { PluginMessage, PostMessage } from '@/@types/common'
+import Store from '@/src/Store'
 import Editor from '@/src/components/Editor'
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const { getOptions, listenPluginMessage, closePlugin } = Store.useContainer()
+
   function onKeyDown(event: KeyboardEvent): void {
-    console.log('onKeyDown', event.keyCode)
     // esc
     if (event.keyCode === 27) {
-      const pluginMessage: PluginMessage = {
-        type: 'close-plugin'
-      }
-      parent.postMessage({ pluginMessage } as PostMessage, '*')
+      closePlugin()
     }
     // cmd + enter
     // else if ((event.metaKey || event.ctrlKey) && event.keyCode == 13) {}
   }
 
   useEffect(() => {
-    console.log('App mounted')
+    console.log('AppContent mounted')
+
+    // get options
+    getOptions()
+
+    // start listen pluginMessage
+    listenPluginMessage()
+
+    // watch keydown event
     document.addEventListener('keydown', onKeyDown, { passive: true })
 
     return () => {
+      // unwatch keydown event
       document.removeEventListener('keydown', onKeyDown)
     }
   }, [])
@@ -52,6 +59,18 @@ const App: React.FC = () => {
         />
       </div>
     </>
+  )
+}
+
+const App: React.FC = () => {
+  useEffect(() => {
+    console.log('App mounted')
+  }, [])
+
+  return (
+    <Store.Provider>
+      <AppContent />
+    </Store.Provider>
   )
 }
 

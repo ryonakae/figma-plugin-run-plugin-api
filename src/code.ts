@@ -1,4 +1,5 @@
 import {
+  ClosePluginMessage,
   ExecMessage,
   Options,
   PluginMessage,
@@ -8,18 +9,18 @@ import {
 
 const CLIENT_STORAGE_KEY_NAME = 'run-plugin-api'
 
-const defaultOptions: Options = {
+export const defaultOptions: Options = {
   editorOptions: {
     cursorBlinking: 'smooth',
     folding: false,
     fontFamily: 'Menlo, Monaco, "Courier New", monospace',
     fontSize: 13,
     fontWeight: '400',
+    lineHeight: 20.8,
     formatOnPaste: true,
     formatOnType: true,
     glyphMargin: true,
     lineDecorationsWidth: 0,
-    lineHeight: 20.8,
     lineNumbers: 'off',
     lineNumbersMinChars: 0,
     matchBrackets: 'near',
@@ -31,9 +32,17 @@ const defaultOptions: Options = {
       bottom: 20
     },
     renderWhitespace: 'boundary',
+    scrollBeyondLastColumn: 0,
+    scrollBeyondLastLine: false,
     selectionHighlight: false,
+    suggestLineHeight: 17.5,
     tabSize: 2,
     wordWrap: 'bounded'
+  },
+  code: ["// Let's type 'figma'", ''].join('\n'),
+  cursorPosition: {
+    lineNumber: 2,
+    column: 0
   }
 }
 
@@ -46,30 +55,38 @@ function exec(msg: ExecMessage) {
   }, 500)
 }
 
-function closePlugin() {
+async function closePlugin() {
   figma.closePlugin()
 }
 
 async function getOptions() {
-  console.log('getOptions')
+  console.log('getOptions start')
 
   // clientStorageからオプションを取得
-  const options: Options | undefined = await figma.clientStorage.getAsync(
-    CLIENT_STORAGE_KEY_NAME
-  )
+  // optionsが無かったらdefaultOptions
+  const options: Options =
+    // (await figma.clientStorage.getAsync(CLIENT_STORAGE_KEY_NAME)) ||
+    defaultOptions
+
+  // codeが空だったらcodeとcursorPositionは初期値を入れる
+  if (options.code == '') {
+    options.code = defaultOptions.code
+    options.cursorPosition = defaultOptions.cursorPosition
+  }
 
   // uiに渡す
   const pluginMessage: PluginMessage = {
-    type: 'get-options',
-    options: options || defaultOptions // optionsが無かったらdefaultOptions
+    type: 'get-options-success',
+    options
   }
-  figma.ui.postMessage({ pluginMessage } as PostMessage)
+  figma.ui.postMessage(pluginMessage)
+  console.log('postMessage: get-options-success', options)
 
   console.log('getOptions finish')
 }
 
 async function setOptions(msg: SetOptionsMessage) {
-  console.log('setOptions')
+  console.log('setOptions start')
 
   // clientStorageからオプションを取得
   const currentOptions: Options | undefined =
@@ -84,7 +101,7 @@ async function setOptions(msg: SetOptionsMessage) {
   // clientStorageに保存
   await figma.clientStorage.setAsync(CLIENT_STORAGE_KEY_NAME, newOptions)
 
-  console.log('setOptions finish')
+  console.log('setOptions finish', newOptions)
 }
 
 figma.ui.onmessage = (msg: PluginMessage) => {
@@ -95,6 +112,14 @@ figma.ui.onmessage = (msg: PluginMessage) => {
 
     case 'close-plugin':
       closePlugin()
+      break
+
+    case 'get-options':
+      getOptions()
+      break
+
+    case 'set-options':
+      setOptions(msg)
       break
 
     default:

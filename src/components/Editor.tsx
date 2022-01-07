@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
-import * as MonacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useEffect, useRef } from 'react'
 import 'ress'
 import { transpile } from 'typescript'
@@ -13,7 +13,7 @@ import {
 } from '@/@types/common'
 import Store from '@/src/Store'
 import figmaTypings from '@/src/assets/figma.dts'
-import { allTheme, builtinTheme, customTheme } from '@/src/themeList'
+import { allTheme } from '@/src/themeList'
 
 type EditorProps = JSX.IntrinsicElements['div']
 
@@ -44,7 +44,7 @@ const Editor: React.FC<EditorProps> = props => {
     isEditorMounted,
     setIsEditorMounted
   } = Store.useContainer()
-  const editorRef = useRef<MonacoEditor.editor.IStandaloneCodeEditor>()
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>()
   const monacoRef = useRef<Monaco>()
   const onChangeTimer = useRef(0)
   const onCursorPositionChangeTimer = useRef(0)
@@ -82,7 +82,7 @@ const Editor: React.FC<EditorProps> = props => {
   }
 
   async function onMount(
-    editor: MonacoEditor.editor.IStandaloneCodeEditor,
+    editor: monaco.editor.IStandaloneCodeEditor,
     monaco: Monaco
   ) {
     console.log('Editor onMount', editor, monaco)
@@ -107,7 +107,7 @@ const Editor: React.FC<EditorProps> = props => {
 
   function onChange(
     value: string | undefined,
-    event: MonacoEditor.editor.IModelContentChangedEvent
+    event: monaco.editor.IModelContentChangedEvent
   ) {
     console.log('Editor onChange', value, event)
 
@@ -138,7 +138,7 @@ const Editor: React.FC<EditorProps> = props => {
   }
 
   function onCursorPositionChange(
-    event: MonacoEditor.editor.ICursorPositionChangedEvent
+    event: monaco.editor.ICursorPositionChangedEvent
   ) {
     // ユーザーが任意でカーソル移動させた時以外はreturn
     if (event.reason !== 3) {
@@ -164,7 +164,7 @@ const Editor: React.FC<EditorProps> = props => {
     }, ONCHANGE_TIMER_DURATION)
   }
 
-  function onValidate(markers: MonacoEditor.editor.IMarker[]) {
+  function onValidate(markers: monaco.editor.IMarker[]) {
     console.log('Editor onValidate', markers)
     setError(markers)
   }

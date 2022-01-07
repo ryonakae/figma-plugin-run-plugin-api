@@ -1,4 +1,4 @@
-import * as MonacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { builtinTheme, customTheme } from '@/src/themeList'
 
 type BuiltinThemeType = typeof builtinTheme
@@ -6,9 +6,9 @@ type CustomThemeType = typeof customTheme
 type AllThemeType = BuiltinThemeType & CustomThemeType
 
 type Options = {
-  editorOptions: MonacoEditor.editor.IStandaloneEditorConstructionOptions
+  editorOptions: monaco.editor.IStandaloneEditorConstructionOptions
   code: string
-  cursorPosition: MonacoEditor.IPosition | MonacoEditor.Position
+  cursorPosition: monaco.IPosition | monaco.Position
   theme: keyof AllThemeType
 }
 

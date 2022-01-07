@@ -1,4 +1,4 @@
-import * as MonacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { useState } from 'react'
 import { createContainer } from 'unstated-next'
 import {
@@ -17,7 +17,7 @@ function Store() {
     Options['cursorPosition']
   >({ lineNumber: 0, column: 0 })
   const [theme, setTheme] = useState<Options['theme']>('vs-dark')
-  const [error, setError] = useState<MonacoEditor.editor.IMarker[]>([])
+  const [error, setError] = useState<monaco.editor.IMarker[]>([])
   const [isGotOptions, setIsGotOptions] = useState(false)
   const [isEditorMounted, setIsEditorMounted] = useState(false)
 

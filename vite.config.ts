@@ -1,7 +1,7 @@
 import { resolve } from 'path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-import { viteSingleFile } from 'vite-plugin-singlefile'
+// import { viteSingleFile } from 'vite-plugin-singlefile'
 import vitePluginString from 'vite-plugin-string'
 
 // https://vitejs.dev/config/
@@ -21,10 +21,11 @@ export default defineConfig({
       babel: {
         plugins: ['@emotion/babel-plugin']
       }
-    }),
-    viteSingleFile()
+    })
+    // viteSingleFile()
   ],
   build: {
+    minify: false,
     cssCodeSplit: false,
     assetsInlineLimit: 999999999,
     rollupOptions: {

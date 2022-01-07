@@ -187,8 +187,10 @@ const Editor: React.FC<EditorProps> = props => {
     console.log('postMessage: exec')
   }
 
-  async function onSelectThemeChange(event) {
-    const newTheme: keyof AllThemeType = event.target.value
+  async function onSelectThemeChange(
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) {
+    const newTheme = event.target.value as keyof AllThemeType
     await updateTheme(newTheme)
     setTheme(newTheme)
   }

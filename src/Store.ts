@@ -7,16 +7,17 @@ import {
   PluginMessage,
   PostMessage
 } from '@/@types/common'
+import defaultOptions from '@/src/defaultOptions'
 
 function Store() {
-  const [code, setCode] = useState<Options['code']>('')
-  const [editorOptions, setEditorOptions] = useState<Options['editorOptions']>(
-    {}
+  const [code, setCode] = useState(defaultOptions.code)
+  const [editorOptions, setEditorOptions] = useState(
+    defaultOptions.editorOptions
   )
-  const [cursorPosition, setCursorPosition] = useState<
-    Options['cursorPosition']
-  >({ lineNumber: 0, column: 0 })
-  const [theme, setTheme] = useState<Options['theme']>('vs-dark')
+  const [cursorPosition, setCursorPosition] = useState(
+    defaultOptions.cursorPosition
+  )
+  const [theme, setTheme] = useState(defaultOptions.theme)
   const [error, setError] = useState<monaco.editor.IMarker[]>([])
   const [isGotOptions, setIsGotOptions] = useState(false)
   const [isEditorMounted, setIsEditorMounted] = useState(false)

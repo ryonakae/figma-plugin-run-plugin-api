@@ -1,9 +1,15 @@
 import * as MonacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import { builtinTheme, customTheme } from '@/src/themeList'
+
+type BuiltinThemeType = typeof builtinTheme
+type CustomThemeType = typeof customTheme
+type AllThemeType = BuiltinThemeType & CustomThemeType
 
 type Options = {
   editorOptions: MonacoEditor.editor.IStandaloneEditorConstructionOptions
   code: string
   cursorPosition: MonacoEditor.IPosition | MonacoEditor.Position
+  theme: keyof AllThemeType
 }
 
 type ClosePluginMessage = {

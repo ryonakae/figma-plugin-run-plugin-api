@@ -43,7 +43,8 @@ export const defaultOptions: Options = {
   cursorPosition: {
     lineNumber: 2,
     column: 0
-  }
+  },
+  theme: 'light'
 }
 
 function exec(msg: ExecMessage) {
@@ -65,7 +66,7 @@ async function getOptions() {
   // clientStorageからオプションを取得
   // optionsが無かったらdefaultOptions
   const options: Options =
-    // (await figma.clientStorage.getAsync(CLIENT_STORAGE_KEY_NAME)) ||
+    (await figma.clientStorage.getAsync(CLIENT_STORAGE_KEY_NAME)) ||
     defaultOptions
 
   // codeが空だったらcodeとcursorPositionは初期値を入れる

@@ -4,19 +4,27 @@ import * as MonacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useEffect, useRef } from 'react'
 import 'ress'
 import { transpile } from 'typescript'
-import { PluginMessage, PostMessage } from '@/@types/common'
+import {
+  AllThemeType,
+  BuiltinThemeType,
+  Options,
+  PluginMessage,
+  PostMessage
+} from '@/@types/common'
 import Store from '@/src/Store'
 import figmaTypings from '@/src/assets/figma.dts'
+import { allTheme, builtinTheme, customTheme } from '@/src/themeList'
 
 type EditorProps = JSX.IntrinsicElements['div']
 
+const CDN_URL = 'https://wonderful-newton-c6b380.netlify.app'
 const ONCHANGE_TIMER_DURATION = 500
 
 // change cdn url to custom builded monaco-editor
 loader.config({
   paths: {
     // vs: 'https://file.brdr.jp/figma-plugin-run-plugin-api/vs'
-    vs: 'https://wonderful-newton-c6b380.netlify.app/vs'
+    vs: CDN_URL + '/vs'
   }
 })
 
@@ -28,22 +36,24 @@ const Editor: React.FC<EditorProps> = props => {
     setEditorOptions,
     cursorPosition,
     setCursorPosition,
+    theme,
+    setTheme,
     error,
     setError,
-    isGotOptions
+    isGotOptions,
+    isEditorMounted,
+    setIsEditorMounted
   } = Store.useContainer()
   const editorRef = useRef<MonacoEditor.editor.IStandaloneCodeEditor>()
+  const monacoRef = useRef<Monaco>()
   const onChangeTimer = useRef(0)
   const onCursorPositionChangeTimer = useRef(0)
 
-  function onMount(
-    editor: MonacoEditor.editor.IStandaloneCodeEditor,
-    monaco: Monaco
-  ) {
-    console.log('editorOnMount', editor, monaco)
+  function beforeMount(monaco: Monaco) {
+    console.log('Editor beforeMount', monaco)
 
-    // editorRefにeditorを入れる
-    editorRef.current = editor
+    // refに引数を入れて他の場所で参照できるようにする
+    monacoRef.current = monaco
 
     // validation settings
     monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
@@ -69,6 +79,19 @@ const Editor: React.FC<EditorProps> = props => {
     // When resolving definitions and references, the editor will try to use created models.
     // Creating a model for the library allows "peek definition/references" commands to work with the library.
     monaco.editor.createModel(libSource, 'typescript', monaco.Uri.parse(libUri))
+  }
+
+  async function onMount(
+    editor: MonacoEditor.editor.IStandaloneCodeEditor,
+    monaco: Monaco
+  ) {
+    console.log('Editor onMount', editor, monaco)
+
+    // refに引数を入れて他の場所で参照できるようにする
+    editorRef.current = editor
+
+    // apply theme
+    await updateTheme(theme)
 
     // focus editor
     editor.focus()
@@ -78,6 +101,8 @@ const Editor: React.FC<EditorProps> = props => {
 
     // watch cursor position and save position
     editor.onDidChangeCursorPosition(onCursorPositionChange)
+
+    setIsEditorMounted(true)
   }
 
   function onChange(
@@ -103,7 +128,8 @@ const Editor: React.FC<EditorProps> = props => {
         options: {
           editorOptions,
           code: newCode,
-          cursorPosition: newCursorPosition
+          cursorPosition: newCursorPosition,
+          theme
         }
       }
       parent.postMessage({ pluginMessage } as PostMessage, '*')
@@ -129,7 +155,8 @@ const Editor: React.FC<EditorProps> = props => {
         options: {
           editorOptions,
           code,
-          cursorPosition: event.position
+          cursorPosition: event.position,
+          theme
         }
       }
       parent.postMessage({ pluginMessage } as PostMessage, '*')
@@ -160,31 +187,60 @@ const Editor: React.FC<EditorProps> = props => {
     console.log('postMessage: exec')
   }
 
+  async function onSelectThemeChange(event) {
+    const newTheme: keyof AllThemeType = event.target.value
+    await updateTheme(newTheme)
+    setTheme(newTheme)
+  }
+
+  async function updateTheme(theme: Options['theme']) {
+    if (!monacoRef.current) {
+      return
+    }
+
+    console.log('updateTheme', theme)
+
+    // light と vs-darkのときはフェッチしない
+    function isBuiltinTheme(
+      theme: keyof AllThemeType
+    ): theme is keyof BuiltinThemeType {
+      return theme === 'light' || theme === 'vs-dark'
+    }
+
+    if (isBuiltinTheme(theme)) {
+      console.log('apply builtinTheme', theme)
+      monacoRef.current.editor.setTheme(theme)
+    } else {
+      console.log('fetchTheme', allTheme[theme])
+
+      const url = `${CDN_URL}/themes/${allTheme[theme]}.json`
+      const res = await fetch(url)
+      const json = await res.json()
+      // const parsedTheme = MonacoThemes.parseTmTheme(json)
+      // console.log(parsedTheme)
+      console.log(theme, allTheme[theme], json)
+
+      monacoRef.current.editor.defineTheme(theme, json)
+      monacoRef.current.editor.setTheme(theme)
+    }
+
+    // 設定を保存
+    const pluginMessage: PluginMessage = {
+      type: 'set-options',
+      options: {
+        editorOptions,
+        code,
+        cursorPosition,
+        theme
+      }
+    }
+    parent.postMessage({ pluginMessage } as PostMessage, '*')
+    console.log('postMessage: set-options', pluginMessage.options)
+  }
+
   useEffect(() => {
     console.log('Editor mounted')
   }, [])
-
-  // // editorOptionsがアップデートされたらEditorに反映
-  // useEffect(() => {
-  //   if (!editorRef.current) {
-  //     console.log('editorOptions updated, but editor is not mounted')
-  //     return
-  //   }
-
-  //   console.log('editorOptions updated', editorOptions)
-
-  //   editorRef.current.updateOptions(editorOptions)
-
-  //   // オプションをclientStorageに保存
-  //   const pluginMessage: PluginMessage = {
-  //     type: 'set-options',
-  //     options: {
-  //       editorOptions,
-  //       code
-  //     }
-  //   }
-  //   parent.postMessage({ pluginMessage } as PostMessage, '*')
-  // }, [editorOptions])
 
   return (
     <div {...props}>
@@ -195,26 +251,42 @@ const Editor: React.FC<EditorProps> = props => {
           value={code}
           onChange={onChange}
           onMount={onMount}
+          beforeMount={beforeMount}
           onValidate={onValidate}
           options={editorOptions}
-          theme="vs-dark"
+          theme={theme}
         />
       )}
 
-      <button
-        disabled={code.length > 0 && error.length > 0}
-        onClick={exec}
+      {!isEditorMounted && <div>Loading</div>}
+
+      <div
         css={css`
-          background-color: blue;
-          color: white;
-          padding: 5px 10px;
-          border-radius: 4px;
-          margin-top: 10px;
-          margin-left: 10px;
+          display: flex;
         `}
       >
-        exec
-      </button>
+        <button
+          disabled={code.length > 0 && error.length > 0}
+          onClick={exec}
+          css={css`
+            background-color: blue;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            margin-left: 10px;
+          `}
+        >
+          exec
+        </button>
+        <select value={theme} onChange={onSelectThemeChange}>
+          {Object.keys(allTheme).map((value, index) => (
+            <option key={index} value={value}>
+              {allTheme[value as keyof AllThemeType]}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   )
 }

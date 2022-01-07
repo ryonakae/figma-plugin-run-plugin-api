@@ -16,8 +16,10 @@ function Store() {
   const [cursorPosition, setCursorPosition] = useState<
     Options['cursorPosition']
   >({ lineNumber: 0, column: 0 })
+  const [theme, setTheme] = useState<Options['theme']>('vs-dark')
   const [error, setError] = useState<MonacoEditor.editor.IMarker[]>([])
   const [isGotOptions, setIsGotOptions] = useState(false)
+  const [isEditorMounted, setIsEditorMounted] = useState(false)
 
   function getOptions() {
     parent.postMessage(
@@ -31,9 +33,12 @@ function Store() {
 
   function updateOptions(pluginMessage: GetOptionsSuccessMessage) {
     const options = pluginMessage.options
+
     setCode(options.code)
     setEditorOptions(options.editorOptions)
     setCursorPosition(options.cursorPosition)
+    setTheme(options.theme)
+
     setIsGotOptions(true)
   }
 
@@ -74,10 +79,14 @@ function Store() {
     setEditorOptions,
     cursorPosition,
     setCursorPosition,
+    theme,
+    setTheme,
     error,
     setError,
     isGotOptions,
     setIsGotOptions,
+    isEditorMounted,
+    setIsEditorMounted,
     getOptions,
     updateOptions,
     listenPluginMessage,

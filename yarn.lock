@@ -1471,6 +1471,11 @@ fast-levenshtein@^2.0.6:
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
+fast-plist@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/fast-plist/-/fast-plist-0.1.2.tgz#a45aff345196006d406ca6cdcd05f69051ef35b8"
+  integrity sha1-pFr/NFGWAG1AbKbNzQX2kFHvNbg=
+
 fastq@^1.6.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.13.0.tgz#616760f88a7526bdfc596b7cab8c18938c36b98c"
@@ -2033,6 +2038,13 @@ monaco-editor@^0.31.1:
   version "0.31.1"
   resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.31.1.tgz#67f597b3e45679d1f551237e12a3a42c4438b97b"
   integrity sha512-FYPwxGZAeP6mRRyrr5XTGHD9gRXVjy7GUzF4IPChnyt3fS5WrNxIkS8DNujWf6EQy0Zlzpxw8oTVE+mWI2/D1Q==
+
+monaco-themes@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/monaco-themes/-/monaco-themes-0.4.0.tgz#4bcb0584efdf6586a5edb76287e7e51457f591cd"
+  integrity sha512-AJL7Sk3j1DrQo94RqaYBr+IrGNP/2f5drFkKXKyjNZHYY/j+2Pv+O4+WETYkrTj9m1Zm2K3YRuGP/I3+5rHPxw==
+  dependencies:
+    fast-plist "^0.1.2"
 
 ms@2.0.0:
   version "2.0.0"

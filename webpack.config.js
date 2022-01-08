@@ -32,7 +32,11 @@ module.exports = (env, argv) =>
           ]
         },
         {
-          test: /\.(jpe?g|png|bmp|gif|webp|svg)$/,
+          test: /\.inline.svg$/,
+          use: '@svgr/webpack'
+        },
+        {
+          test: /\.jpe?g$|\.gif$|\.png$|^(?!.*\.inline\.svg$).*\.svg$/,
           type: 'asset/inline'
         },
         {

@@ -11,7 +11,8 @@ import {
   PostMessage
 } from '@/@types/common'
 import Store from '@/src/Store'
-import figmaTypings from '@/src/assets/figma.dts'
+import IconSetting from '@/src/assets/img/icon_setting.inline.svg'
+import figmaTypings from '@/src/assets/types/figma.dts'
 import { allTheme } from '@/src/themeList'
 
 type EditorProps = JSX.IntrinsicElements['div']
@@ -287,6 +288,7 @@ const Editor: React.FC<EditorProps> = props => {
             </option>
           ))}
         </select>
+        <IconSetting />
       </div>
     </div>
   )

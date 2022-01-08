@@ -1,25 +1,26 @@
+import { css } from '@emotion/react'
 import { Property } from 'csstype'
-import React, { CSSProperties } from 'react'
+import React from 'react'
 
 type HStackProps = JSX.IntrinsicElements['div'] & {
   align?: Property.AlignItems
-  style?: CSSProperties
+  justify?: Property.JustifyContent
 }
 
 const HStack: React.FC<HStackProps> = ({
-  align = 'stretch',
-  style,
+  align = 'center',
+  justify = 'inherit',
   children,
   ...delegated
 }) => {
   return (
     <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: align,
-        ...style
-      }}
+      css={css`
+        display: flex;
+        flex-direction: row;
+        align-items: ${align};
+        justify-content: ${justify};
+      `}
       {...delegated}
     >
       {children}

@@ -11,8 +11,14 @@ import {
   PostMessage
 } from '@/@types/common'
 import Store from '@/ui/Store'
+import IconPlay from '@/ui/assets/img/icon_play.inline.svg'
 import IconSetting from '@/ui/assets/img/icon_setting.inline.svg'
 import figmaTypings from '@/ui/assets/types/figma.dts'
+import Button from '@/ui/components/Button'
+import HStack from '@/ui/components/HStack'
+import Spacer from '@/ui/components/Spacer'
+import VStack from '@/ui/components/VStack'
+import { typography, color, spacing } from '@/ui/styles'
 import { allTheme } from '@/ui/themeList'
 
 type EditorProps = JSX.IntrinsicElements['div']
@@ -28,7 +34,7 @@ loader.config({
   }
 })
 
-const Editor: React.FC<EditorProps> = props => {
+const Editor: React.FC<EditorProps> = () => {
   const {
     code,
     setCode,
@@ -245,52 +251,73 @@ const Editor: React.FC<EditorProps> = props => {
   }, [])
 
   return (
-    <div {...props}>
-      {/* isGetOptionsがtrueになったらEditorをマウント */}
+    <VStack
+      css={css`
+        position: relative;
+        height: 100%;
+      `}
+    >
       {isGotOptions && (
-        <ReactMonacoEditor
-          defaultLanguage="typescript"
-          value={code}
-          onChange={onChange}
-          onMount={onMount}
-          beforeMount={beforeMount}
-          onValidate={onValidate}
-          options={editorOptions}
-          theme={theme}
-        />
-      )}
-
-      {!isEditorMounted && <div>Loading</div>}
-
-      <div
-        css={css`
-          display: flex;
-        `}
-      >
-        <button
-          disabled={code.length > 0 && error.length > 0}
-          onClick={exec}
+        <div
           css={css`
-            background-color: blue;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            margin-top: 10px;
-            margin-left: 10px;
+            flex: 1;
           `}
         >
-          exec
-        </button>
-        <select value={theme} onChange={onSelectThemeChange}>
+          <ReactMonacoEditor
+            beforeMount={beforeMount}
+            defaultLanguage="typescript"
+            onChange={onChange}
+            onMount={onMount}
+            onValidate={onValidate}
+            options={editorOptions}
+            theme={theme}
+            value={code}
+          />
+        </div>
+      )}
+
+      <HStack
+        css={css`
+          padding: ${spacing[2]};
+        `}
+      >
+        <Button
+          type={'active'}
+          onClick={exec}
+          css={css`
+            width: 160px;
+          `}
+        >
+          <IconPlay fill={color.activeButtonText} />
+          <Spacer x={spacing[2]} />
+          <span>Run Code</span>
+        </Button>
+        {/* <select value={theme} onChange={onSelectThemeChange}>
           {Object.keys(allTheme).map((value, index) => (
             <option key={index} value={value}>
               {allTheme[value as keyof AllThemeType]}
             </option>
           ))}
-        </select>
+        </select> */}
+        <Spacer stretch={true} />
         <IconSetting />
-      </div>
-    </div>
+      </HStack>
+
+      {!isEditorMounted && (
+        <div
+          css={css`
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          `}
+        >
+          <div>Loading</div>
+        </div>
+      )}
+    </VStack>
   )
 }
 

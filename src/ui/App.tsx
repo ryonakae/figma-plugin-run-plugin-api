@@ -2,7 +2,8 @@ import { css, Global } from '@emotion/react'
 import React, { useEffect } from 'react'
 import 'ress'
 import Store from '@/ui/Store'
-import Editor from '@/ui/components/Editor'
+import CodeEditor from '@/ui/components/CodeEditor'
+import { typography, color } from '@/ui/styles'
 
 const AppContent: React.FC = () => {
   const { getOptions, listenPluginMessage, closePlugin } = Store.useContainer()
@@ -38,26 +39,29 @@ const AppContent: React.FC = () => {
     <>
       <Global
         styles={css`
+          body {
+            font-family: ${typography.fontFamily};
+            font-size: ${typography.fontSize};
+            line-height: ${typography.lineHeight};
+            font-weight: ${typography.fontWeightDefault};
+            background-color: ${color.bg};
+            cursor: default;
+            user-select: none;
+          }
+
+          :any-link {
+            color: ${color.active};
+            text-decoration: none;
+            cursor: default;
+          }
+
           #plugin {
             width: 100vw;
             height: 100vh;
           }
         `}
       />
-      <div
-        css={css`
-          // background-color: gray;
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-        `}
-      >
-        <Editor
-          css={css`
-            height: 85vh;
-          `}
-        />
-      </div>
+      <CodeEditor />
     </>
   )
 }

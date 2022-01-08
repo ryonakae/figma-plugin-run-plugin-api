@@ -282,13 +282,13 @@ const Editor: React.FC<EditorProps> = () => {
         `}
       >
         <Button
-          type={'active'}
+          type={'primary'}
           onClick={exec}
           css={css`
             width: 160px;
           `}
         >
-          <IconPlay fill={color.activeButtonText} />
+          <IconPlay />
           <Spacer x={spacing[2]} />
           <span>Run Code</span>
         </Button>
@@ -300,7 +300,9 @@ const Editor: React.FC<EditorProps> = () => {
           ))}
         </select> */}
         <Spacer stretch={true} />
-        <IconSetting />
+        <Button type={'ghost'}>
+          <IconSetting />
+        </Button>
       </HStack>
 
       {!isEditorMounted && (

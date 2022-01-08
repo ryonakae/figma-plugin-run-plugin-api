@@ -4,21 +4,34 @@ import HStack from '@/ui/components/HStack'
 import { typography, color, spacing, radius, size } from '@/ui/styles'
 
 type ButtonProps = JSX.IntrinsicElements['div'] & {
-  type?: 'active' | 'border' | 'ghost'
+  type?: 'primary' | 'border' | 'ghost'
   onClick?: React.MouseEventHandler<HTMLDivElement>
 }
 
 const Button: React.FC<ButtonProps> = ({
-  type = 'active',
+  type = 'primary',
   onClick = () => {
     console.log('Button onClick')
   },
   children,
   ...delegated
 }) => {
-  const backgroundColor = type === 'active' ? color.active : 'transparent'
+  const backgroundColor = type === 'primary' ? color.primary : 'transparent'
   const borderColor = type === 'border' ? color.borderButton : 'transparent'
-  const textColor = type === 'active' ? color.activeButtonText : color.text
+  const textColor = type === 'primary' ? color.primaryButtonText : color.text
+
+  let activeBorderStyle!: string
+  let hoverBackgroundColor!: string
+  if (type === 'primary') {
+    activeBorderStyle = `2px solid ${color.primaryButtonActiveBorder}`
+    hoverBackgroundColor = color.primary
+  } else if (type === 'border') {
+    activeBorderStyle = `2px solid ${color.primary}`
+    hoverBackgroundColor = 'transparent'
+  } else if (type === 'ghost') {
+    activeBorderStyle = `2px solid transparent`
+    hoverBackgroundColor = color.ghostButtonHoverBg
+  }
 
   return (
     <div
@@ -28,9 +41,20 @@ const Button: React.FC<ButtonProps> = ({
         border-radius: ${radius.button};
         min-width: ${size.button};
         height: ${size.button};
-        color: ${color.activeButtonText};
         padding: 0 ${spacing[2]};
         color: ${textColor};
+
+        &:hover {
+          background-color: ${hoverBackgroundColor};
+        }
+
+        &:active {
+          border: ${activeBorderStyle};
+        }
+
+        & svg {
+          fill: ${textColor};
+        }
       `}
       onClick={onClick}
       {...delegated}

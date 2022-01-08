@@ -50,7 +50,7 @@ const AppContent: React.FC = () => {
           }
 
           :any-link {
-            color: ${color.active};
+            color: ${color.primary};
             text-decoration: none;
             cursor: default;
           }

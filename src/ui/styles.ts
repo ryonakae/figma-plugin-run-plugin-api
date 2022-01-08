@@ -10,12 +10,14 @@ export const typography = {
 export const color = {
   bg: '#fff',
   text: '#333',
-  activeButtonText: '#fff',
   alert: '#f04629',
-  active: '#18a0fb',
+  primary: '#18a0fb',
   inactive: '#b3b3b3',
   border: '#e5e5e5',
-  borderButton: '#333'
+  borderButton: '#333',
+  primaryButtonText: '#fff',
+  primaryButtonActiveBorder: 'rgba(0, 0, 0, 0.3)',
+  ghostButtonHoverBg: 'rgba(0, 0, 0, 0.06)'
 }
 
 export const radius = {

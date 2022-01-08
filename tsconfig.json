@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES6",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ES6", "DOM"],
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "allowJs": false,
@@ -11,9 +11,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true,
     "strict": true,
-    "useDefineForClassFields": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["*"],

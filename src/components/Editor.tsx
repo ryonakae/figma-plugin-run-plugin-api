@@ -3,7 +3,6 @@ import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useEffect, useRef } from 'react'
 import 'ress'
-import { transpile } from 'typescript'
 import {
   AllThemeType,
   BuiltinThemeType,
@@ -176,7 +175,7 @@ const Editor: React.FC<EditorProps> = props => {
 
     const tsCode = editorRef.current.getValue()
     console.log(tsCode)
-    const jsCode = transpile(tsCode)
+    const jsCode = ts.transpile(tsCode)
     console.log(jsCode)
 
     const pluginMessage: PluginMessage = {

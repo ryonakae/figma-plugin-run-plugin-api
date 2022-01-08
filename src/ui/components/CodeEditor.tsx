@@ -258,57 +258,54 @@ const CodeEditor: React.FC = () => {
   }, [])
 
   return (
-    <>
-      {' '}
-      <VStack
-        css={css`
-          position: relative;
-          height: 100%;
-        `}
-      >
-        {isGotOptions && (
-          <div
-            css={css`
-              flex: 1;
-            `}
-          >
-            <ReactMonacoEditor
-              beforeMount={beforeMount}
-              defaultLanguage="typescript"
-              onChange={onChange}
-              onMount={onMount}
-              onValidate={onValidate}
-              options={editorOptions}
-              theme={theme}
-              value={code}
-            />
-          </div>
-        )}
-
-        <HStack
+    <VStack
+      css={css`
+        position: relative;
+        height: 100%;
+      `}
+    >
+      {isGotOptions && (
+        <div
           css={css`
-            padding: ${spacing[2]};
+            flex: 1;
           `}
         >
-          <Button type={'ghost'} onClick={onSettingClick}>
-            <IconSetting />
-          </Button>
+          <ReactMonacoEditor
+            beforeMount={beforeMount}
+            defaultLanguage="typescript"
+            onChange={onChange}
+            onMount={onMount}
+            onValidate={onValidate}
+            options={editorOptions}
+            theme={theme}
+            value={code}
+          />
+        </div>
+      )}
 
-          <Spacer stretch={true} />
+      <HStack
+        css={css`
+          padding: ${spacing[2]};
+        `}
+      >
+        <Button type={'ghost'} onClick={onSettingClick}>
+          <IconSetting />
+        </Button>
 
-          <Button
-            type={'primary'}
-            onClick={exec}
-            disabled={code.length > 0 && error.length > 0}
-          >
-            <IconPlay />
-            <Spacer x={spacing[2]} />
-            <div>Run Code (Cmd + Enter)</div>
-          </Button>
-        </HStack>
-      </VStack>
-      {!isCodeEditorMounted && <Loading />}
-    </>
+        <Spacer stretch={true} />
+
+        <Button
+          type={'primary'}
+          onClick={exec}
+          disabled={code.length > 0 && error.length > 0}
+        >
+          <IconPlay />
+          <Spacer x={spacing[2]} />
+          <div>Run Code (Cmd + Enter)</div>
+        </Button>
+      </HStack>
+      {!isCodeEditorMounted && <Loading>Loading</Loading>}
+    </VStack>
   )
 }
 

@@ -90,26 +90,26 @@ const Setting: React.FC = () => {
     // )
   }
 
-  // async function onMount(
-  //   editor: monaco.editor.IStandaloneCodeEditor,
-  //   monaco: Monaco
-  // ) {
-  //   console.log('SettingEditor onMount', editor, monaco)
+  async function onMount(
+    editor: monaco.editor.IStandaloneCodeEditor,
+    monaco: Monaco
+  ) {
+    console.log('SettingEditor onMount', editor, monaco)
 
-  //   // refに引数を入れて他の場所で参照できるようにする
-  //   editorRef.current = editor
+    // refに引数を入れて他の場所で参照できるようにする
+    editorRef.current = editor
 
-  //   // apply theme
-  //   await updateTheme(monaco, theme)
+    // apply theme
+    await updateTheme(monaco, theme)
 
-  //   // focus editor
-  //   editor.focus()
+    // // focus editor
+    // editor.focus()
 
-  //   // apply cursor position
-  //   editor.setPosition(cursorPosition)
+    // // apply cursor position
+    // editor.setPosition(cursorPosition)
 
-  //   setIsSettingEditorMounted(true)
-  // }
+    setIsSettingEditorMounted(true)
+  }
 
   function onChange(
     value: string | undefined,
@@ -154,92 +154,90 @@ const Setting: React.FC = () => {
   }, [])
 
   return (
-    <>
-      <VStack
+    <VStack
+      css={css`
+        position: relative;
+        height: 100%;
+      `}
+    >
+      {isGotOptions && (
+        <div
+          css={css`
+            flex: 1;
+          `}
+        >
+          <ReactMonacoEditor
+            beforeMount={beforeMount}
+            defaultLanguage="json"
+            onChange={onChange}
+            onMount={onMount}
+            // onValidate={onValidate}
+            options={editorOptions}
+            theme={theme}
+            value={JSON.stringify(defaultOptions, null, 2)}
+          />
+        </div>
+      )}
+
+      <div
         css={css`
-          position: relative;
-          height: 100%;
+          width: 100%;
+          height: 1px;
+          background-color: ${color.border};
+        `}
+      />
+
+      <HStack
+        css={css`
+          padding: ${spacing[2]};
         `}
       >
-        {isGotOptions && (
-          <div
-            css={css`
-              flex: 1;
-            `}
-          >
-            <ReactMonacoEditor
-              beforeMount={beforeMount}
-              defaultLanguage="json"
-              onChange={onChange}
-              // onMount={onMount}
-              // onValidate={onValidate}
-              options={editorOptions}
-              theme={theme}
-              value={JSON.stringify(defaultOptions, null, 2)}
-            />
-          </div>
-        )}
-
-        <div
+        <div>Theme</div>
+        <Spacer stretch={true} />
+        <select
+          value={theme}
+          onChange={onSelectThemeChange}
           css={css`
-            width: 100%;
-            height: 1px;
-            background-color: ${color.border};
-          `}
-        />
-
-        <HStack
-          css={css`
-            padding: ${spacing[2]};
+            width: 50%;
+            height: ${size.select};
+            padding: 0 ${spacing[1]};
+            border: 1px solid ${color.border};
           `}
         >
-          <div>Theme</div>
-          <Spacer stretch={true} />
-          <select
-            value={theme}
-            onChange={onSelectThemeChange}
-            css={css`
-              width: 50%;
-              height: ${size.select};
-              padding: 0 ${spacing[1]};
-              border: 1px solid ${color.border};
-            `}
-          >
-            {Object.keys(allTheme).map((value, index) => (
-              <option key={index} value={value}>
-                {allTheme[value as keyof AllThemeType]}
-              </option>
-            ))}
-          </select>
-        </HStack>
+          {Object.keys(allTheme).map((value, index) => (
+            <option key={index} value={value}>
+              {allTheme[value as keyof AllThemeType]}
+            </option>
+          ))}
+        </select>
+      </HStack>
 
-        <div
-          css={css`
-            width: 100%;
-            height: 1px;
-            background-color: ${color.border};
-          `}
-        />
+      <div
+        css={css`
+          width: 100%;
+          height: 1px;
+          background-color: ${color.border};
+        `}
+      />
 
-        <HStack
-          css={css`
-            padding: ${spacing[2]};
-          `}
+      <HStack
+        css={css`
+          padding: ${spacing[2]};
+        `}
+      >
+        <Button type={'ghost'} onClick={onCloseClick}>
+          <IconBack />
+        </Button>
+        <Spacer stretch={true} />
+        <Button
+          type={'border'}
+          // disabled={code.length > 0 && error.length > 0}
         >
-          <Button type={'ghost'} onClick={onCloseClick}>
-            <IconBack />
-          </Button>
-          <Spacer stretch={true} />
-          <Button
-            type={'border'}
-            // disabled={code.length > 0 && error.length > 0}
-          >
-            Apply Settings
-          </Button>
-        </HStack>
-      </VStack>
+          Apply Settings
+        </Button>
+      </HStack>
       {!isSettingEditorMounted && <Loading />}
-    </>
+    </VStack>
   )
 }
 

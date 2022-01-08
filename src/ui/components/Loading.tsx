@@ -2,7 +2,7 @@ import { css } from '@emotion/react'
 import React from 'react'
 import { color, zIndex } from '@/ui/styles'
 
-const Loading: React.FC = () => {
+const Loading: React.FC = ({ children, ...delegated }) => {
   return (
     <div
       css={css`
@@ -16,8 +16,9 @@ const Loading: React.FC = () => {
         z-index: ${zIndex.setting};
         color: ${color.inactive};
       `}
+      {...delegated}
     >
-      <div>Loading</div>
+      {children}
     </div>
   )
 }

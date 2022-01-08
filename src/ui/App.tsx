@@ -1,8 +1,8 @@
 import { css, Global } from '@emotion/react'
 import React, { useEffect } from 'react'
 import 'ress'
-import Store from '@/src/Store'
-import Editor from '@/src/components/Editor'
+import Store from '@/ui/Store'
+import Editor from '@/ui/components/Editor'
 
 const AppContent: React.FC = () => {
   const { getOptions, listenPluginMessage, closePlugin } = Store.useContainer()

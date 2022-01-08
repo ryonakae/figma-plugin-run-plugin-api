@@ -7,7 +7,7 @@ import {
   PluginMessage,
   PostMessage
 } from '@/@types/common'
-import defaultOptions from '@/src/defaultOptions'
+import defaultOptions from '@/defaultOptions'
 
 function Store() {
   const [code, setCode] = useState(defaultOptions.code)

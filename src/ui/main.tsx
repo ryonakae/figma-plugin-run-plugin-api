@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import App from '@/src/App'
+import App from '@/ui/App'
 
 const plugin = document.getElementById('plugin') as HTMLElement
 

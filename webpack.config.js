@@ -11,7 +11,7 @@ module.exports = (env, argv) =>
     devtool: argv.mode === 'production' ? false : 'inline-source-map',
     entry: {
       code: './src/code.ts',
-      ui: './src/ui.tsx'
+      ui: './src/ui/main.tsx'
     },
     output: {
       path: path.resolve(__dirname, 'dist'),
@@ -48,7 +48,7 @@ module.exports = (env, argv) =>
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
       alias: {
-        '@': path.resolve(__dirname, '.')
+        '@': path.resolve(__dirname, 'src')
       }
     },
     plugins: [
@@ -56,7 +56,7 @@ module.exports = (env, argv) =>
         ts: 'ts'
       }),
       new HtmlWebpackPlugin({
-        template: './src/ui.html',
+        template: './src/ui/index.html',
         filename: 'ui.html',
         inject: 'body',
         inlineSource: '.(js)$',

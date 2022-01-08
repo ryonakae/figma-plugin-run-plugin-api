@@ -6,7 +6,7 @@ import {
   PostMessage,
   SetOptionsMessage
 } from '@/@types/common'
-import defaultOptions from '@/src/defaultOptions'
+import defaultOptions from '@/defaultOptions'
 
 const CLIENT_STORAGE_KEY_NAME = 'run-plugin-api'
 

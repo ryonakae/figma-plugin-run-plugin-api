@@ -10,10 +10,10 @@ import {
   PluginMessage,
   PostMessage
 } from '@/@types/common'
-import Store from '@/src/Store'
-import IconSetting from '@/src/assets/img/icon_setting.inline.svg'
-import figmaTypings from '@/src/assets/types/figma.dts'
-import { allTheme } from '@/src/themeList'
+import Store from '@/ui/Store'
+import IconSetting from '@/ui/assets/img/icon_setting.inline.svg'
+import figmaTypings from '@/ui/assets/types/figma.dts'
+import { allTheme } from '@/ui/themeList'
 
 type EditorProps = JSX.IntrinsicElements['div']
 

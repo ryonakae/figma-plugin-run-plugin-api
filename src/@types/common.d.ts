@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-import { builtinTheme, customTheme } from '@/src/themeList'
+import { builtinTheme, customTheme } from '@/ui/themeList'
 
 type BuiltinThemeType = typeof builtinTheme
 type CustomThemeType = typeof customTheme

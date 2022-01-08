@@ -14,17 +14,11 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "*": ["@types/*"]
+      "@/*": ["src/*"],
+      "*": ["src/@types/*"]
     },
     "types": ["@types/node", "@figma/plugin-typings"]
   },
-  "include": [
-    "src",
-    ".eslintrc.js",
-    ".prettierrc.js",
-    "vite.config.ts",
-    "@types"
-  ],
+  "include": ["src", ".eslintrc.js", ".prettierrc.js"],
   "exclude": ["node_modules", "dist"]
 }

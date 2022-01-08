@@ -1,13 +1,19 @@
+import { Monaco } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { useState } from 'react'
 import { createContainer } from 'unstated-next'
 import {
+  AllThemeType,
+  BuiltinThemeType,
+  CurrentScreen,
   GetOptionsSuccessMessage,
   Options,
   PluginMessage,
   PostMessage
 } from '@/@types/common'
+import { CDN_URL, ONCHANGE_TIMER_DURATION } from '@/constants'
 import defaultOptions from '@/defaultOptions'
+import { allTheme } from '@/ui/themeList'
 
 function Store() {
   const [code, setCode] = useState(defaultOptions.code)
@@ -20,7 +26,9 @@ function Store() {
   const [theme, setTheme] = useState(defaultOptions.theme)
   const [error, setError] = useState<monaco.editor.IMarker[]>([])
   const [isGotOptions, setIsGotOptions] = useState(false)
-  const [isEditorMounted, setIsEditorMounted] = useState(false)
+  const [isCodeEditorMounted, setIsCodeEditorMounted] = useState(false)
+  const [isSettingEditorMounted, setIsSettingEditorMounted] = useState(false)
+  const [currentScreen, setCurrentScreen] = useState<CurrentScreen>('main')
 
   function getOptions() {
     parent.postMessage(
@@ -73,6 +81,50 @@ function Store() {
     console.log('postMessage: close-plugin')
   }
 
+  async function updateTheme(monaco: Monaco, theme: Options['theme']) {
+    console.log('updateTheme', theme)
+
+    // light と vs-darkのときはフェッチしない
+    function isBuiltinTheme(
+      theme: keyof AllThemeType
+    ): theme is keyof BuiltinThemeType {
+      return theme === 'light' || theme === 'vs-dark'
+    }
+
+    if (isBuiltinTheme(theme)) {
+      console.log('apply builtinTheme', theme)
+      monaco.editor.setTheme(theme)
+    } else {
+      console.log('fetchTheme', allTheme[theme])
+
+      const url = `${CDN_URL}/themes/${allTheme[theme]}.json`
+      const res = await fetch(url)
+      const json = await res.json()
+      // const parsedTheme = MonacoThemes.parseTmTheme(json)
+      // console.log(parsedTheme)
+      console.log(theme, allTheme[theme], json)
+
+      monaco.editor.defineTheme(theme, json)
+      monaco.editor.setTheme(theme)
+    }
+
+    // Storeにも保存
+    setTheme(theme)
+
+    // 設定を保存
+    const pluginMessage: PluginMessage = {
+      type: 'set-options',
+      options: {
+        editorOptions,
+        code,
+        cursorPosition,
+        theme
+      }
+    }
+    parent.postMessage({ pluginMessage } as PostMessage, '*')
+    console.log('postMessage: set-options', pluginMessage.options)
+  }
+
   return {
     code,
     setCode,
@@ -86,12 +138,17 @@ function Store() {
     setError,
     isGotOptions,
     setIsGotOptions,
-    isEditorMounted,
-    setIsEditorMounted,
+    isCodeEditorMounted,
+    setIsCodeEditorMounted,
+    isSettingEditorMounted,
+    setIsSettingEditorMounted,
+    currentScreen,
+    setCurrentScreen,
     getOptions,
     updateOptions,
     listenPluginMessage,
-    closePlugin
+    closePlugin,
+    updateTheme
   }
 }
 

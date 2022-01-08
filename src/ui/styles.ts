@@ -10,9 +10,10 @@ export const typography = {
 export const color = {
   bg: '#fff',
   text: '#333',
-  alert: '#f04629',
+  alert: '#F24822',
   primary: '#18a0fb',
   inactive: '#b3b3b3',
+  disabled: '#acacac',
   border: '#e5e5e5',
   borderButton: '#333',
   primaryButtonText: '#fff',
@@ -30,11 +31,18 @@ export const spacing = {
   '1': '4px',
   '2': '8px',
   '3': '12px',
-  '4': '16px'
+  '4': '16px',
+  '5': '20px',
+  '6': '24px',
+  '7': '28px',
+  '8': '32px',
+  '9': '36px',
+  '10': '40px'
 }
 
 export const size = {
-  button: '32px'
+  button: '32px',
+  select: '28px'
 }
 
 export const zIndex = {

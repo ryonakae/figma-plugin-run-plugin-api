@@ -12,6 +12,8 @@ type Options = {
   theme: keyof AllThemeType
 }
 
+type CurrentScreen = 'main' | 'setting'
+
 type ClosePluginMessage = {
   type: 'close-plugin'
 }

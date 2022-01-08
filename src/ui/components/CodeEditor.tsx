@@ -2,7 +2,6 @@ import { css } from '@emotion/react'
 import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useEffect, useRef } from 'react'
-import 'ress'
 import {
   AllThemeType,
   BuiltinThemeType,
@@ -10,21 +9,18 @@ import {
   PluginMessage,
   PostMessage
 } from '@/@types/common'
+import { CDN_URL, ONCHANGE_TIMER_DURATION } from '@/constants'
 import Store from '@/ui/Store'
 import IconPlay from '@/ui/assets/img/icon_play.inline.svg'
 import IconSetting from '@/ui/assets/img/icon_setting.inline.svg'
 import figmaTypings from '@/ui/assets/types/figma.dts'
 import Button from '@/ui/components/Button'
 import HStack from '@/ui/components/HStack'
+import Loading from '@/ui/components/Loading'
 import Spacer from '@/ui/components/Spacer'
 import VStack from '@/ui/components/VStack'
-import { typography, color, spacing } from '@/ui/styles'
+import { typography, color, spacing, zIndex } from '@/ui/styles'
 import { allTheme } from '@/ui/themeList'
-
-type EditorProps = JSX.IntrinsicElements['div']
-
-const CDN_URL = 'https://wonderful-newton-c6b380.netlify.app'
-const ONCHANGE_TIMER_DURATION = 500
 
 // change cdn url to custom builded monaco-editor
 loader.config({
@@ -34,7 +30,7 @@ loader.config({
   }
 })
 
-const Editor: React.FC<EditorProps> = () => {
+const CodeEditor: React.FC = () => {
   const {
     code,
     setCode,
@@ -47,16 +43,18 @@ const Editor: React.FC<EditorProps> = () => {
     error,
     setError,
     isGotOptions,
-    isEditorMounted,
-    setIsEditorMounted
+    isCodeEditorMounted,
+    setIsCodeEditorMounted,
+    setCurrentScreen
   } = Store.useContainer()
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>()
   const monacoRef = useRef<Monaco>()
+  const modelRef = useRef<monaco.editor.ITextModel>()
   const onChangeTimer = useRef(0)
   const onCursorPositionChangeTimer = useRef(0)
 
   function beforeMount(monaco: Monaco) {
-    console.log('Editor beforeMount', monaco)
+    console.log('CodeEditor beforeMount', monaco)
 
     // refに引数を入れて他の場所で参照できるようにする
     monacoRef.current = monaco
@@ -84,14 +82,18 @@ const Editor: React.FC<EditorProps> = () => {
 
     // When resolving definitions and references, the editor will try to use created models.
     // Creating a model for the library allows "peek definition/references" commands to work with the library.
-    monaco.editor.createModel(libSource, 'typescript', monaco.Uri.parse(libUri))
+    modelRef.current = monaco.editor.createModel(
+      libSource,
+      'typescript',
+      monaco.Uri.parse(libUri)
+    )
   }
 
   async function onMount(
     editor: monaco.editor.IStandaloneCodeEditor,
     monaco: Monaco
   ) {
-    console.log('Editor onMount', editor, monaco)
+    console.log('CodeEditor onMount', editor, monaco)
 
     // refに引数を入れて他の場所で参照できるようにする
     editorRef.current = editor
@@ -108,14 +110,14 @@ const Editor: React.FC<EditorProps> = () => {
     // watch cursor position and save position
     editor.onDidChangeCursorPosition(onCursorPositionChange)
 
-    setIsEditorMounted(true)
+    setIsCodeEditorMounted(true)
   }
 
   function onChange(
     value: string | undefined,
     event: monaco.editor.IModelContentChangedEvent
   ) {
-    console.log('Editor onChange', value, event)
+    console.log('CodeEditor onChange', value, event)
 
     const newCode = value || ''
     const newCursorPosition = editorRef.current?.getPosition() || {
@@ -171,7 +173,7 @@ const Editor: React.FC<EditorProps> = () => {
   }
 
   function onValidate(markers: monaco.editor.IMarker[]) {
-    console.log('Editor onValidate', markers)
+    console.log('CodeEditor onValidate', markers)
     setError(markers)
   }
 
@@ -191,14 +193,6 @@ const Editor: React.FC<EditorProps> = () => {
     }
     parent.postMessage({ pluginMessage } as PostMessage, '*')
     console.log('postMessage: exec')
-  }
-
-  async function onSelectThemeChange(
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) {
-    const newTheme = event.target.value as keyof AllThemeType
-    await updateTheme(newTheme)
-    setTheme(newTheme)
   }
 
   async function updateTheme(theme: Options['theme']) {
@@ -246,81 +240,76 @@ const Editor: React.FC<EditorProps> = () => {
     console.log('postMessage: set-options', pluginMessage.options)
   }
 
+  function onSettingClick() {
+    setCurrentScreen('setting')
+  }
+
   useEffect(() => {
     console.log('Editor mounted')
+    setIsCodeEditorMounted(false)
+
+    // destroy textModel on unmount
+    return () => {
+      console.log('Editor unmounted')
+      if (modelRef.current) {
+        modelRef.current.dispose()
+      }
+    }
   }, [])
 
   return (
-    <VStack
-      css={css`
-        position: relative;
-        height: 100%;
-      `}
-    >
-      {isGotOptions && (
-        <div
-          css={css`
-            flex: 1;
-          `}
-        >
-          <ReactMonacoEditor
-            beforeMount={beforeMount}
-            defaultLanguage="typescript"
-            onChange={onChange}
-            onMount={onMount}
-            onValidate={onValidate}
-            options={editorOptions}
-            theme={theme}
-            value={code}
-          />
-        </div>
-      )}
-
-      <HStack
+    <>
+      {' '}
+      <VStack
         css={css`
-          padding: ${spacing[2]};
+          position: relative;
+          height: 100%;
         `}
       >
-        <Button
-          type={'primary'}
-          onClick={exec}
-          css={css`
-            width: 160px;
-          `}
-        >
-          <IconPlay />
-          <Spacer x={spacing[2]} />
-          <span>Run Code</span>
-        </Button>
-        {/* <select value={theme} onChange={onSelectThemeChange}>
-          {Object.keys(allTheme).map((value, index) => (
-            <option key={index} value={value}>
-              {allTheme[value as keyof AllThemeType]}
-            </option>
-          ))}
-        </select> */}
-        <Spacer stretch={true} />
-        <Button type={'ghost'}>
-          <IconSetting />
-        </Button>
-      </HStack>
+        {isGotOptions && (
+          <div
+            css={css`
+              flex: 1;
+            `}
+          >
+            <ReactMonacoEditor
+              beforeMount={beforeMount}
+              defaultLanguage="typescript"
+              onChange={onChange}
+              onMount={onMount}
+              onValidate={onValidate}
+              options={editorOptions}
+              theme={theme}
+              value={code}
+            />
+          </div>
+        )}
 
-      {!isEditorMounted && (
-        <div
+        <HStack
           css={css`
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: ${spacing[2]};
           `}
         >
-          <div>Loading</div>
-        </div>
-      )}
-    </VStack>
+          <Button type={'ghost'} onClick={onSettingClick}>
+            <IconSetting />
+          </Button>
+
+          <Spacer stretch={true} />
+
+          <Button
+            type={'primary'}
+            onClick={exec}
+            disabled={code.length > 0 && error.length > 0}
+          >
+            <IconPlay />
+            <Spacer x={spacing[2]} />
+            <div>Run Code (Cmd + Enter)</div>
+          </Button>
+        </HStack>
+      </VStack>
+      {!isCodeEditorMounted && <Loading />}
+    </>
   )
 }
 
-export default Editor
+export default CodeEditor

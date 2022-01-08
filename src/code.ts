@@ -29,7 +29,7 @@ async function getOptions() {
   // clientStorageからオプションを取得
   // optionsが無かったらdefaultOptions
   const options: Options =
-    (await figma.clientStorage.getAsync(CLIENT_STORAGE_KEY_NAME)) ||
+    // (await figma.clientStorage.getAsync(CLIENT_STORAGE_KEY_NAME)) ||
     defaultOptions
 
   // codeが空だったらcodeとcursorPositionは初期値を入れる
@@ -92,6 +92,6 @@ figma.ui.onmessage = (msg: PluginMessage) => {
 }
 
 figma.showUI(__html__, {
-  width: 600,
+  width: 500,
   height: 300
 })

@@ -60,7 +60,8 @@ module.exports = (env, argv) =>
         filename: 'ui.html',
         inject: 'body',
         inlineSource: '.(js)$',
-        chunks: ['ui']
+        chunks: ['ui'],
+        cache: false
       }),
       new HtmlInlineScriptWebpackPlugin([/ui.js$/])
     ],

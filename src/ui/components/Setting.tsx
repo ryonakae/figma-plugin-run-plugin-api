@@ -13,6 +13,7 @@ import { CDN_URL, ONCHANGE_TIMER_DURATION } from '@/constants'
 import defaultOptions from '@/defaultOptions'
 import Store from '@/ui/Store'
 import IconBack from '@/ui/assets/img/icon_back.inline.svg'
+import JSONSchemaIStandaloneEditorConstructionOptions from '@/ui/assets/types/IStandaloneEditorConstructionOptions.schema.json'
 import figmaTypings from '@/ui/assets/types/figma.dts'
 import Button from '@/ui/components/Button'
 import HStack from '@/ui/components/HStack'
@@ -59,6 +60,27 @@ const Setting: React.FC = () => {
 
     // refに引数を入れて他の場所で参照できるようにする
     monacoRef.current = monaco
+
+    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+      validate: true,
+      schemas: [
+        {
+          uri: 'http://json-schema.org/draft-07/schema',
+          // schema: JSONSchemaIStandaloneEditorConstructionOptions
+          schema: {
+            type: 'object',
+            properties: {
+              cursorBlinking: {
+                description:
+                  "Control the cursor animation style, possible values are 'blink', 'smooth', 'phase', 'expand' and 'solid'.\nDefaults to 'blink'.",
+                enum: ['blink', 'expand', 'phase', 'smooth', 'solid'],
+                type: 'string'
+              }
+            }
+          }
+        }
+      ]
+    })
 
     // // validation settings
     // monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
@@ -174,7 +196,7 @@ const Setting: React.FC = () => {
             // onValidate={onValidate}
             options={editorOptions}
             theme={theme}
-            value={JSON.stringify(defaultOptions, null, 2)}
+            value={JSON.stringify(editorOptions, null, 2)}
           />
         </div>
       )}

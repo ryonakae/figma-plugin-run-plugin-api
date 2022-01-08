@@ -288,14 +288,14 @@ const CodeEditor: React.FC = () => {
           padding: ${spacing[2]};
         `}
       >
-        <Button type={'ghost'} onClick={onSettingClick}>
+        <Button type="ghost" onClick={onSettingClick}>
           <IconSetting />
         </Button>
 
         <Spacer stretch={true} />
 
         <Button
-          type={'primary'}
+          type="primary"
           onClick={exec}
           disabled={code.length > 0 && error.length > 0}
         >

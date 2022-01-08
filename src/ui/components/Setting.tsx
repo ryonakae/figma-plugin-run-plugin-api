@@ -61,55 +61,18 @@ const Setting: React.FC = () => {
     // refに引数を入れて他の場所で参照できるようにする
     monacoRef.current = monaco
 
+    console.log(JSONSchemaIStandaloneEditorConstructionOptions)
+
     monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
       validate: true,
       schemas: [
         {
-          uri: 'http://json-schema.org/draft-07/schema',
-          // schema: JSONSchemaIStandaloneEditorConstructionOptions
-          schema: {
-            type: 'object',
-            properties: {
-              cursorBlinking: {
-                description:
-                  "Control the cursor animation style, possible values are 'blink', 'smooth', 'phase', 'expand' and 'solid'.\nDefaults to 'blink'.",
-                enum: ['blink', 'expand', 'phase', 'smooth', 'solid'],
-                type: 'string'
-              }
-            }
-          }
+          uri: 'http://myserver/foo-schema.json',
+          fileMatch: ['*'],
+          schema: JSONSchemaIStandaloneEditorConstructionOptions
         }
       ]
     })
-
-    // // validation settings
-    // monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-    //   noSemanticValidation: true,
-    //   noSyntaxValidation: false
-    // })
-
-    // // compiler options
-    // monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-    //   target: monaco.languages.typescript.ScriptTarget.ESNext,
-    //   allowNonTsExtensions: true,
-    //   noEmit: true
-    // })
-
-    // // add external libraries (figma typings)
-    // const libSource = figmaTypings
-    // const libUri = 'ts:filename/figma.d.ts'
-    // monaco.languages.typescript.javascriptDefaults.addExtraLib(
-    //   libSource,
-    //   libUri
-    // )
-
-    // When resolving definitions and references, the editor will try to use created models.
-    // Creating a model for the library allows "peek definition/references" commands to work with the library.
-    // modelRef.current = monaco.editor.createModel(
-    //   libSource,
-    //   'typescript',
-    //   monaco.Uri.parse(libUri)
-    // )
   }
 
   async function onMount(
@@ -138,8 +101,36 @@ const Setting: React.FC = () => {
     event: monaco.editor.IModelContentChangedEvent
   ) {
     console.log('SettingEditor onChange', value, event)
-    const newOptions = value || '{}'
-    setEditorOptions(JSON.parse(newOptions))
+    const options = value || '{}'
+    const parsedOptions = JSON.parse(options)
+    setEditorOptions(parsedOptions)
+  }
+
+  function onApplyClick() {
+    if (!editorRef.current) {
+      return
+    }
+
+    console.log('SettingEditor onApplyClick')
+
+    const options = editorRef.current.getValue()
+    const parsedOptions = JSON.parse(options)
+
+    // stateに値を保存して、エディタに設定を反映
+    setEditorOptions(parsedOptions)
+    editorRef.current.updateOptions(parsedOptions)
+
+    // local storageに設定を保存
+    const pluginMessage: PluginMessage = {
+      type: 'set-options',
+      options: {
+        editorOptions,
+        code,
+        cursorPosition,
+        theme
+      }
+    }
+    parent.postMessage({ pluginMessage } as PostMessage, '*')
   }
 
   // function onValidate(markers: monaco.editor.IMarker[]) {
@@ -191,12 +182,13 @@ const Setting: React.FC = () => {
           <ReactMonacoEditor
             beforeMount={beforeMount}
             defaultLanguage="json"
-            onChange={onChange}
+            // onChange={onChange}
             onMount={onMount}
             // onValidate={onValidate}
             options={editorOptions}
             theme={theme}
-            value={JSON.stringify(editorOptions, null, 2)}
+            defaultValue={JSON.stringify(editorOptions, null, 2)}
+            // value={JSON.stringify(editorOptions, null, 2)}
           />
         </div>
       )}
@@ -247,13 +239,16 @@ const Setting: React.FC = () => {
           padding: ${spacing[2]};
         `}
       >
-        <Button type={'ghost'} onClick={onCloseClick}>
+        <Button type="ghost" onClick={onCloseClick}>
           <IconBack />
         </Button>
         <Spacer stretch={true} />
+        <Button type="border">Reset to Default</Button>
+        <Spacer x={spacing[2]} />
         <Button
-          type={'border'}
+          type="primary"
           // disabled={code.length > 0 && error.length > 0}
+          onClick={onApplyClick}
         >
           Apply Settings
         </Button>

@@ -32,6 +32,11 @@ type ExecMessage = {
   type: 'exec'
   code: string
 }
+type NotifyMessage = {
+  type: 'notify'
+  message: string
+  options?: NotificationOptions
+}
 
 type PluginMessage =
   | ClosePluginMessage
@@ -39,6 +44,7 @@ type PluginMessage =
   | GetOptionsSuccessMessage
   | SetOptionsMessage
   | ExecMessage
+  | NotifyMessage
 
 type PostMessage = {
   pluginMessage: PluginMessage

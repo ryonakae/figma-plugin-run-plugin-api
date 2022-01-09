@@ -11,7 +11,7 @@ import {
   PluginMessage,
   PostMessage
 } from '@/@types/common'
-import { CDN_URL, ONCHANGE_TIMER_DURATION } from '@/constants'
+import { CDN_URL } from '@/constants'
 import defaultOptions from '@/defaultOptions'
 import { allTheme } from '@/ui/themeList'
 
@@ -24,10 +24,8 @@ function Store() {
     defaultOptions.cursorPosition
   )
   const [theme, setTheme] = useState(defaultOptions.theme)
-  const [error, setError] = useState<monaco.editor.IMarker[]>([])
   const [isGotOptions, setIsGotOptions] = useState(false)
-  const [isCodeEditorMounted, setIsCodeEditorMounted] = useState(false)
-  const [isSettingEditorMounted, setIsSettingEditorMounted] = useState(false)
+  const [isMainEditorMounted, setIsMainEditorMounted] = useState(false)
   const [currentScreen, setCurrentScreen] = useState<CurrentScreen>('main')
 
   function getOptions() {
@@ -74,10 +72,14 @@ function Store() {
   }
 
   function closePlugin() {
-    const pluginMessage: PluginMessage = {
-      type: 'close-plugin'
-    }
-    parent.postMessage({ pluginMessage } as PostMessage, '*')
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'close-plugin'
+        }
+      } as PostMessage,
+      '*'
+    )
     console.log('postMessage: close-plugin')
   }
 
@@ -111,19 +113,23 @@ function Store() {
     // Storeにも保存
     setTheme(theme)
 
-    // 設定を保存
-    const pluginMessage: PluginMessage = {
-      type: 'set-options',
-      options: {
-        editorOptions,
-        code,
-        cursorPosition,
-        theme
-      }
-    }
-    parent.postMessage({ pluginMessage } as PostMessage, '*')
-    console.log('postMessage: set-options', pluginMessage.options)
+    console.log('updateTheme finish')
   }
+
+  // function validateManually(
+  //   editor: monaco.editor.IStandaloneCodeEditor,
+  //   monaco: Monaco
+  // ) {
+  //   console.log('validateManually')
+
+  //   const editorUri = editor.getModel()?.uri
+
+  //   if (editorUri) {
+  //     const currentEditorHasMarkerChanges = uris.find(
+  //       uri => uri.path === editorUri.path
+  //     )
+  //   }
+  // }
 
   return {
     code,
@@ -134,14 +140,10 @@ function Store() {
     setCursorPosition,
     theme,
     setTheme,
-    error,
-    setError,
     isGotOptions,
     setIsGotOptions,
-    isCodeEditorMounted,
-    setIsCodeEditorMounted,
-    isSettingEditorMounted,
-    setIsSettingEditorMounted,
+    isMainEditorMounted,
+    setIsMainEditorMounted,
     currentScreen,
     setCurrentScreen,
     getOptions,

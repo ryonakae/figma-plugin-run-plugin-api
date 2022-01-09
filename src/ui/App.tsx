@@ -2,18 +2,13 @@ import { css, Global } from '@emotion/react'
 import React, { useEffect } from 'react'
 import 'ress'
 import Store from '@/ui/Store'
-import CodeEditor from '@/ui/components/CodeEditor'
+import Main from '@/ui/components/Main'
 import Setting from '@/ui/components/Setting'
 import { typography, color } from '@/ui/styles'
 
 const AppContent: React.FC = () => {
-  const {
-    getOptions,
-    listenPluginMessage,
-    closePlugin,
-    currentScreen,
-    setCurrentScreen
-  } = Store.useContainer()
+  const { getOptions, listenPluginMessage, closePlugin, currentScreen } =
+    Store.useContainer()
 
   function onKeyDown(event: KeyboardEvent): void {
     // esc
@@ -68,7 +63,7 @@ const AppContent: React.FC = () => {
           }
         `}
       />
-      {currentScreen === 'main' && <CodeEditor />}
+      {currentScreen === 'main' && <Main />}
       {currentScreen === 'setting' && <Setting />}
     </>
   )

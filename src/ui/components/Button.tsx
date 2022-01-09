@@ -6,12 +6,14 @@ import { typography, color, spacing, radius, size } from '@/ui/styles'
 type ButtonProps = JSX.IntrinsicElements['div'] & {
   type?: 'primary' | 'border' | 'ghost'
   disabled?: boolean
+  padding?: boolean
   onClick?: React.MouseEventHandler<HTMLDivElement>
 }
 
 const Button: React.FC<ButtonProps> = ({
   type = 'primary',
   disabled = false,
+  padding = true,
   onClick = () => {
     console.log('Button onClick')
   },
@@ -52,7 +54,7 @@ const Button: React.FC<ButtonProps> = ({
         border-radius: ${radius.button};
         min-width: ${size.button};
         height: ${size.button};
-        padding: 0 ${spacing[2]}; // 8px
+        padding: ${padding ? `0 ${spacing[3]}` : 0};
         color: ${textColor};
         pointer-events: ${disabled ? 'none' : 'auto'};
 
@@ -62,7 +64,7 @@ const Button: React.FC<ButtonProps> = ({
 
         &:active {
           border: ${activeBorderStyle};
-          padding: 0 7px;
+          padding: ${padding ? '0 11px' : 0};
         }
 
         & svg {

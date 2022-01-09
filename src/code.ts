@@ -1,9 +1,8 @@
 import {
-  ClosePluginMessage,
   ExecMessage,
+  NotifyMessage,
   Options,
   PluginMessage,
-  PostMessage,
   SetOptionsMessage
 } from '@/@types/common'
 import defaultOptions from '@/defaultOptions'
@@ -29,7 +28,7 @@ async function getOptions() {
   // clientStorageからオプションを取得
   // optionsが無かったらdefaultOptions
   const options: Options =
-    // (await figma.clientStorage.getAsync(CLIENT_STORAGE_KEY_NAME)) ||
+    (await figma.clientStorage.getAsync(CLIENT_STORAGE_KEY_NAME)) ||
     defaultOptions
 
   // codeが空だったらcodeとcursorPositionは初期値を入れる
@@ -39,11 +38,10 @@ async function getOptions() {
   }
 
   // uiに渡す
-  const pluginMessage: PluginMessage = {
+  figma.ui.postMessage({
     type: 'get-options-success',
     options
-  }
-  figma.ui.postMessage(pluginMessage)
+  } as PluginMessage)
   console.log('postMessage: get-options-success', options)
 
   console.log('getOptions finish')
@@ -68,6 +66,12 @@ async function setOptions(msg: SetOptionsMessage) {
   console.log('setOptions finish', newOptions)
 }
 
+function notify(msg: NotifyMessage) {
+  const message = msg.message
+  const options = msg.options || undefined
+  figma.notify(message, options)
+}
+
 figma.ui.onmessage = (msg: PluginMessage) => {
   switch (msg.type) {
     case 'exec':
@@ -84,6 +88,10 @@ figma.ui.onmessage = (msg: PluginMessage) => {
 
     case 'set-options':
       setOptions(msg)
+      break
+
+    case 'notify':
+      notify(msg)
       break
 
     default:

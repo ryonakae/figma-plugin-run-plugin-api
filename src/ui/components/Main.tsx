@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   AllThemeType,
   BuiltinThemeType,
@@ -19,7 +19,7 @@ import HStack from '@/ui/components/HStack'
 import Loading from '@/ui/components/Loading'
 import Spacer from '@/ui/components/Spacer'
 import VStack from '@/ui/components/VStack'
-import { typography, color, spacing, zIndex } from '@/ui/styles'
+import { spacing } from '@/ui/styles'
 import { allTheme } from '@/ui/themeList'
 
 // change cdn url to custom builded monaco-editor
@@ -30,28 +30,26 @@ loader.config({
   }
 })
 
-const CodeEditor: React.FC = () => {
+const Main: React.FC = () => {
   const {
     code,
     setCode,
     editorOptions,
-    setEditorOptions,
     cursorPosition,
     setCursorPosition,
     theme,
-    setTheme,
-    error,
-    setError,
     isGotOptions,
-    isCodeEditorMounted,
-    setIsCodeEditorMounted,
-    setCurrentScreen
+    isMainEditorMounted,
+    setIsMainEditorMounted,
+    setCurrentScreen,
+    updateTheme
   } = Store.useContainer()
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>()
   const monacoRef = useRef<Monaco>()
   const modelRef = useRef<monaco.editor.ITextModel>()
   const onChangeTimer = useRef(0)
   const onCursorPositionChangeTimer = useRef(0)
+  const [error, setError] = useState<monaco.editor.IMarker[]>([])
 
   function beforeMount(monaco: Monaco) {
     console.log('CodeEditor beforeMount', monaco)
@@ -99,7 +97,7 @@ const CodeEditor: React.FC = () => {
     editorRef.current = editor
 
     // apply theme
-    await updateTheme(theme)
+    await updateTheme(monaco, theme)
 
     // focus editor
     editor.focus()
@@ -110,7 +108,7 @@ const CodeEditor: React.FC = () => {
     // watch cursor position and save position
     editor.onDidChangeCursorPosition(onCursorPositionChange)
 
-    setIsCodeEditorMounted(true)
+    setIsMainEditorMounted(true)
   }
 
   function onChange(
@@ -131,17 +129,21 @@ const CodeEditor: React.FC = () => {
     // ちょっと遅延させてclientStorageに値を保存する
     window.clearInterval(onChangeTimer.current)
     onChangeTimer.current = window.setTimeout(() => {
-      const pluginMessage: PluginMessage = {
-        type: 'set-options',
-        options: {
-          editorOptions,
-          code: newCode,
-          cursorPosition: newCursorPosition,
-          theme
-        }
-      }
-      parent.postMessage({ pluginMessage } as PostMessage, '*')
-      console.log('postMessage: set-options', pluginMessage.options)
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: 'set-options',
+            options: {
+              editorOptions,
+              code: newCode,
+              cursorPosition: newCursorPosition,
+              theme
+            }
+          }
+        } as PostMessage,
+        '*'
+      )
+      console.log('postMessage: set-options')
     }, ONCHANGE_TIMER_DURATION)
   }
 
@@ -158,17 +160,21 @@ const CodeEditor: React.FC = () => {
     // ちょっと遅延させてclientStorageに値を保存する
     window.clearInterval(onCursorPositionChangeTimer.current)
     onCursorPositionChangeTimer.current = window.setTimeout(() => {
-      const pluginMessage: PluginMessage = {
-        type: 'set-options',
-        options: {
-          editorOptions,
-          code,
-          cursorPosition: event.position,
-          theme
-        }
-      }
-      parent.postMessage({ pluginMessage } as PostMessage, '*')
-      console.log('postMessage: set-options', pluginMessage.options)
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: 'set-options',
+            options: {
+              editorOptions,
+              code,
+              cursorPosition: event.position,
+              theme
+            }
+          }
+        } as PostMessage,
+        '*'
+      )
+      console.log('postMessage: set-options')
     }, ONCHANGE_TIMER_DURATION)
   }
 
@@ -187,57 +193,16 @@ const CodeEditor: React.FC = () => {
     const jsCode = ts.transpile(tsCode)
     console.log(jsCode)
 
-    const pluginMessage: PluginMessage = {
-      type: 'exec',
-      code: jsCode
-    }
-    parent.postMessage({ pluginMessage } as PostMessage, '*')
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'exec',
+          code: jsCode
+        }
+      } as PostMessage,
+      '*'
+    )
     console.log('postMessage: exec')
-  }
-
-  async function updateTheme(theme: Options['theme']) {
-    if (!monacoRef.current) {
-      return
-    }
-
-    console.log('updateTheme', theme)
-
-    // light と vs-darkのときはフェッチしない
-    function isBuiltinTheme(
-      theme: keyof AllThemeType
-    ): theme is keyof BuiltinThemeType {
-      return theme === 'light' || theme === 'vs-dark'
-    }
-
-    if (isBuiltinTheme(theme)) {
-      console.log('apply builtinTheme', theme)
-      monacoRef.current.editor.setTheme(theme)
-    } else {
-      console.log('fetchTheme', allTheme[theme])
-
-      const url = `${CDN_URL}/themes/${allTheme[theme]}.json`
-      const res = await fetch(url)
-      const json = await res.json()
-      // const parsedTheme = MonacoThemes.parseTmTheme(json)
-      // console.log(parsedTheme)
-      console.log(theme, allTheme[theme], json)
-
-      monacoRef.current.editor.defineTheme(theme, json)
-      monacoRef.current.editor.setTheme(theme)
-    }
-
-    // 設定を保存
-    const pluginMessage: PluginMessage = {
-      type: 'set-options',
-      options: {
-        editorOptions,
-        code,
-        cursorPosition,
-        theme
-      }
-    }
-    parent.postMessage({ pluginMessage } as PostMessage, '*')
-    console.log('postMessage: set-options', pluginMessage.options)
   }
 
   function onSettingClick() {
@@ -245,12 +210,12 @@ const CodeEditor: React.FC = () => {
   }
 
   useEffect(() => {
-    console.log('Editor mounted')
-    setIsCodeEditorMounted(false)
+    console.log('Main mounted')
+    // setIsMainEditorMounted(false)
 
     // destroy textModel on unmount
     return () => {
-      console.log('Editor unmounted')
+      console.log('Main unmounted')
       if (modelRef.current) {
         modelRef.current.dispose()
       }
@@ -288,12 +253,24 @@ const CodeEditor: React.FC = () => {
           padding: ${spacing[2]};
         `}
       >
-        <Button type="ghost" onClick={onSettingClick}>
+        {/* setting button */}
+        <Button type="ghost" padding={false} onClick={onSettingClick}>
           <IconSetting />
         </Button>
 
+        <Spacer x={spacing[2]} />
+
+        <a
+          href="https://www.figma.com/plugin-docs/api/api-reference/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          View API documentation
+        </a>
+
         <Spacer stretch={true} />
 
+        {/* exec button */}
         <Button
           type="primary"
           onClick={exec}
@@ -304,9 +281,11 @@ const CodeEditor: React.FC = () => {
           <div>Run Code (Cmd + Enter)</div>
         </Button>
       </HStack>
-      {!isCodeEditorMounted && <Loading>Loading</Loading>}
+
+      {/* loading */}
+      {!isMainEditorMounted && <Loading>Loading</Loading>}
     </VStack>
   )
 }
 
-export default CodeEditor
+export default Main

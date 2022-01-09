@@ -1,26 +1,23 @@
 import { css } from '@emotion/react'
 import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   AllThemeType,
-  BuiltinThemeType,
   Options,
   PluginMessage,
   PostMessage
 } from '@/@types/common'
-import { CDN_URL, ONCHANGE_TIMER_DURATION } from '@/constants'
+import { CDN_URL } from '@/constants'
 import defaultOptions from '@/defaultOptions'
 import Store from '@/ui/Store'
 import IconBack from '@/ui/assets/img/icon_back.inline.svg'
 import JSONSchemaEditorOptions from '@/ui/assets/types/editorOptions.schema.json'
-import figmaTypings from '@/ui/assets/types/figma.dts'
 import Button from '@/ui/components/Button'
 import HStack from '@/ui/components/HStack'
-import Loading from '@/ui/components/Loading'
 import Spacer from '@/ui/components/Spacer'
 import VStack from '@/ui/components/VStack'
-import { typography, color, spacing, zIndex, size } from '@/ui/styles'
+import { color, spacing, size } from '@/ui/styles'
 import { allTheme } from '@/ui/themeList'
 
 // change cdn url to custom builded monaco-editor
@@ -34,26 +31,19 @@ loader.config({
 const Setting: React.FC = () => {
   const {
     code,
-    setCode,
     editorOptions,
     setEditorOptions,
     cursorPosition,
-    setCursorPosition,
     theme,
-    setTheme,
-    error,
-    setError,
     isGotOptions,
-    isSettingEditorMounted,
-    setIsSettingEditorMounted,
     setCurrentScreen,
     updateTheme
   } = Store.useContainer()
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>()
   const monacoRef = useRef<Monaco>()
   const modelRef = useRef<monaco.editor.ITextModel>()
-  const onChangeTimer = useRef(0)
-  const onCursorPositionChangeTimer = useRef(0)
+  const [error, setError] = useState<monaco.editor.IMarker[]>([])
+  const [tmpTheme, setTmpTheme] = useState<Options['theme']>(theme)
 
   function beforeMount(monaco: Monaco) {
     console.log('SettingEditor beforeMount', monaco)
@@ -87,27 +77,34 @@ const Setting: React.FC = () => {
     // apply theme
     await updateTheme(monaco, theme)
 
-    // // focus editor
-    // editor.focus()
+    // focus editor
+    editor.focus()
 
-    // // apply cursor position
-    // editor.setPosition(cursorPosition)
-
-    setIsSettingEditorMounted(true)
+    // apply cursor position
+    editor.setPosition({
+      lineNumber: 1,
+      column: 1
+    })
   }
 
-  function onChange(
-    value: string | undefined,
-    event: monaco.editor.IModelContentChangedEvent
+  function onValidate(markers: monaco.editor.IMarker[]) {
+    console.log('SettingEditor onValidate', markers)
+    setError(markers)
+  }
+
+  async function onSelectThemeChange(
+    event: React.ChangeEvent<HTMLSelectElement>
   ) {
-    console.log('SettingEditor onChange', value, event)
-    const options = value || '{}'
-    const parsedOptions = JSON.parse(options)
-    setEditorOptions(parsedOptions)
+    if (!monacoRef.current) {
+      return
+    }
+    const newTheme = event.target.value as keyof AllThemeType
+    // local stateにテーマの値を保存
+    setTmpTheme(newTheme)
   }
 
-  function onApplyClick() {
-    if (!editorRef.current) {
+  async function onApplyClick() {
+    if (!editorRef.current || !monacoRef.current) {
       return
     }
 
@@ -120,33 +117,85 @@ const Setting: React.FC = () => {
     setEditorOptions(parsedOptions)
     editorRef.current.updateOptions(parsedOptions)
 
+    // テーマを反映
+    await updateTheme(monacoRef.current, tmpTheme)
+
     // local storageに設定を保存
-    const pluginMessage: PluginMessage = {
-      type: 'set-options',
-      options: {
-        editorOptions,
-        code,
-        cursorPosition,
-        theme
-      }
-    }
-    parent.postMessage({ pluginMessage } as PostMessage, '*')
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'set-options',
+          options: {
+            editorOptions,
+            code,
+            cursorPosition,
+            theme
+          }
+        }
+      } as PostMessage,
+      '*'
+    )
+
+    // 完了通知を出す
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'notify',
+          message: 'Settings applied.'
+        }
+      } as PostMessage,
+      '*'
+    )
   }
 
-  // function onValidate(markers: monaco.editor.IMarker[]) {
-  //   console.log('Editor onValidate', markers)
-  //   setError(markers)
-  // }
-
-  async function onSelectThemeChange(
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) {
-    if (!monacoRef.current) {
+  async function onResetClick() {
+    if (!editorRef.current || !monacoRef.current) {
       return
     }
-    const newTheme = event.target.value as keyof AllThemeType
-    await updateTheme(monacoRef.current, newTheme)
-    setTheme(newTheme)
+
+    console.log('SettingEditor onResetClick')
+
+    // デフォルト設定を読み込む
+    const defaultEditorOptions = defaultOptions.editorOptions
+    const defaultTheme = defaultOptions.theme
+
+    // stateに値を保存して、エディタに設定を反映
+    setEditorOptions(defaultEditorOptions)
+    editorRef.current.updateOptions(defaultEditorOptions)
+    // 表示してるテキストもアップデート
+    editorRef.current.setValue(JSON.stringify(defaultEditorOptions, null, 2))
+
+    // デフォルトテーマを反映
+    await updateTheme(monacoRef.current, defaultTheme)
+    // 表示してるテーマの値もアップデート
+    setTmpTheme(defaultTheme)
+
+    // local storageに設定を保存
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'set-options',
+          options: {
+            editorOptions: defaultEditorOptions,
+            code,
+            cursorPosition,
+            theme: defaultTheme
+          }
+        }
+      } as PostMessage,
+      '*'
+    )
+
+    // 完了通知を出す
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'notify',
+          message: 'Reset settings.'
+        }
+      } as PostMessage,
+      '*'
+    )
   }
 
   function onCloseClick() {
@@ -155,7 +204,6 @@ const Setting: React.FC = () => {
 
   useEffect(() => {
     console.log('Setting mounted')
-    setIsSettingEditorMounted(false)
 
     // destroy textModel on unmount
     return () => {
@@ -182,13 +230,11 @@ const Setting: React.FC = () => {
           <ReactMonacoEditor
             beforeMount={beforeMount}
             defaultLanguage="json"
-            // onChange={onChange}
             onMount={onMount}
-            // onValidate={onValidate}
+            onValidate={onValidate}
             options={editorOptions}
             theme={theme}
             defaultValue={JSON.stringify(editorOptions, null, 2)}
-            // value={JSON.stringify(editorOptions, null, 2)}
           />
         </div>
       )}
@@ -209,7 +255,7 @@ const Setting: React.FC = () => {
         <div>Theme</div>
         <Spacer stretch={true} />
         <select
-          value={theme}
+          value={tmpTheme}
           onChange={onSelectThemeChange}
           css={css`
             width: 50%;
@@ -239,21 +285,22 @@ const Setting: React.FC = () => {
           padding: ${spacing[2]};
         `}
       >
-        <Button type="ghost" onClick={onCloseClick}>
+        <Button type="ghost" padding={false} onClick={onCloseClick}>
           <IconBack />
         </Button>
         <Spacer stretch={true} />
-        <Button type="border">Reset to Default</Button>
+        <Button type="border" onClick={onResetClick}>
+          Reset to Default
+        </Button>
         <Spacer x={spacing[2]} />
         <Button
           type="primary"
-          // disabled={code.length > 0 && error.length > 0}
+          disabled={error.length > 0}
           onClick={onApplyClick}
         >
-          Apply Settings
+          Apply Settings (Cmd + S)
         </Button>
       </HStack>
-      {!isSettingEditorMounted && <Loading />}
     </VStack>
   )
 }

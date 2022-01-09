@@ -2,6 +2,7 @@ import { css } from '@emotion/react'
 import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useEffect, useRef, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 import {
   AllThemeType,
   Options,
@@ -47,6 +48,18 @@ const Setting: React.FC = () => {
   const [error, setError] = useState<monaco.editor.IMarker[]>([])
   const [tmpTheme, setTmpTheme] = useState<Options['theme']>(theme)
 
+  // add keyboard shortcut for outside of editor
+  useHotkeys(
+    'ctrl+s, command+s',
+    (event, handler) => {
+      console.log('cmd + s pressed at outer of editor', event, handler)
+      onApplyClick()
+    },
+    {
+      enableOnTags: ['INPUT', 'SELECT', 'TEXTAREA']
+    }
+  )
+
   function beforeMount(monaco: Monaco) {
     console.log('SettingEditor beforeMount', monaco)
 
@@ -78,6 +91,12 @@ const Setting: React.FC = () => {
 
     // apply theme
     await updateTheme(monaco, theme)
+
+    // add keyboard shortcut for inside of editor
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, handler => {
+      console.log('cmd + s pressed at inner of editor', handler)
+      onApplyClick()
+    })
 
     // focus editor
     editor.focus()

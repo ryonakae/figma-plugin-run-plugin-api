@@ -1,5 +1,6 @@
 import { css, Global } from '@emotion/react'
 import React, { useEffect } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 import 'ress'
 import Store from '@/ui/Store'
 import Main from '@/ui/components/Main'
@@ -10,14 +11,17 @@ const AppContent: React.FC = () => {
   const { getOptions, listenPluginMessage, closePlugin, currentScreen } =
     Store.useContainer()
 
-  function onKeyDown(event: KeyboardEvent): void {
-    // esc
-    if (event.keyCode === 27) {
+  // listen keyboard shortcut
+  useHotkeys(
+    'esc',
+    (event, handler) => {
+      console.log('esc pressed', event, handler)
       closePlugin()
+    },
+    {
+      enableOnTags: ['INPUT', 'SELECT', 'TEXTAREA']
     }
-    // cmd + enter
-    // else if ((event.metaKey || event.ctrlKey) && event.keyCode == 13) {}
-  }
+  )
 
   useEffect(() => {
     console.log('AppContent mounted')
@@ -27,14 +31,6 @@ const AppContent: React.FC = () => {
 
     // start listen pluginMessage
     listenPluginMessage()
-
-    // watch keydown event
-    document.addEventListener('keydown', onKeyDown, { passive: true })
-
-    return () => {
-      // unwatch keydown event
-      document.removeEventListener('keydown', onKeyDown)
-    }
   }, [])
 
   return (

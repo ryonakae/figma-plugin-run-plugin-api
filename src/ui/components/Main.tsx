@@ -2,6 +2,7 @@ import { css } from '@emotion/react'
 import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useEffect, useRef, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { PostMessage } from '@/@types/common'
 import { CDN_URL, ONCHANGE_TIMER_DURATION } from '@/constants'
 import Store from '@/ui/Store'
@@ -44,6 +45,12 @@ const Main: React.FC = () => {
   const onChangeTimer = useRef(0)
   const onCursorPositionChangeTimer = useRef(0)
   const [error, setError] = useState<monaco.editor.IMarker[]>([])
+
+  // add keyboard shortcut for outside of editor
+  useHotkeys('ctrl+enter, command+enter', (event, handler) => {
+    console.log('cmd + enter pressed at outer of editor', event, handler)
+    exec()
+  })
 
   function beforeMount(monaco: Monaco) {
     console.log('CodeEditor beforeMount', monaco)
@@ -92,6 +99,12 @@ const Main: React.FC = () => {
 
     // apply theme
     await updateTheme(monaco, theme)
+
+    // add keyboard shortcut for inside of editor
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, handler => {
+      console.log('cmd + enter pressed at inner of editor', handler)
+      exec()
+    })
 
     // focus editor
     editor.focus()

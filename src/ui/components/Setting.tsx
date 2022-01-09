@@ -22,7 +22,7 @@ import { allTheme } from '@/ui/themeList'
 loader.config({
   paths: {
     // vs: 'https://file.brdr.jp/figma-plugin-run-plugin-api/vs'
-    vs: CDN_URL + '/vs'
+    vs: CDN_URL + '/min/vs'
   }
 })
 
@@ -334,6 +334,17 @@ const Setting: React.FC = () => {
         <Button type="ghost" padding={false} onClick={onCloseClick}>
           <IconBack />
         </Button>
+
+        <Spacer x={spacing[2]} />
+
+        {/* option link */}
+        <a
+          href="https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html"
+          target="_blank"
+          rel="noreferrer"
+        >
+          View available options
+        </a>
 
         <Spacer stretch={true} />
 

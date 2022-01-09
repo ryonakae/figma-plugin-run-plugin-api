@@ -21,7 +21,7 @@ import { spacing } from '@/ui/styles'
 loader.config({
   paths: {
     // vs: 'https://file.brdr.jp/figma-plugin-run-plugin-api/vs'
-    vs: CDN_URL + '/vs'
+    vs: CDN_URL + '/min/vs'
   }
 })
 

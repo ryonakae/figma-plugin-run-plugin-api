@@ -15,8 +15,7 @@ You can manipulate Figma with code without having to look for a new plugin.
 
 ## 📮 Support:
 
-If you have any plobrem or feedback, please use the GitHub Issues.
-https://github.com/ryonakae/figma-plugin-run-plugin-api/issues
+If you have any plobrem or feedback, please use the [GitHub Issues](https://github.com/ryonakae/figma-plugin-run-plugin-api/issues).
 
 ---
 

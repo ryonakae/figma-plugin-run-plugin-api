@@ -263,9 +263,13 @@ const Setting: React.FC = () => {
             position: relative;
             flex: 1;
             height: ${size.select};
-            border: 1px solid ${color.border};
+            border: 1px solid ${color.select};
             border-radius: ${radius.select};
             padding: 0 ${spacing[2]};
+
+            &:hover {
+              border-color: ${color.selectHover};
+            }
           `}
         >
           <select

@@ -18,7 +18,9 @@ export const color = {
   borderButton: '#333',
   primaryButtonText: '#fff',
   primaryButtonActiveBorder: 'rgba(0, 0, 0, 0.3)',
-  ghostButtonHoverBg: 'rgba(0, 0, 0, 0.06)'
+  ghostButtonHoverBg: 'rgba(0, 0, 0, 0.06)',
+  select: '#e5e5e5',
+  selectHover: '#ccc'
 }
 
 export const radius = {

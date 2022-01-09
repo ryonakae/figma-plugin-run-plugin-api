@@ -22,8 +22,9 @@ export const color = {
 }
 
 export const radius = {
-  default: '2px',
-  button: '6px'
+  select: '2px',
+  button: '6px',
+  ghostButton: '2px'
 }
 
 export const spacing = {

@@ -26,7 +26,7 @@ function Store() {
   const [theme, setTheme] = useState(defaultOptions.theme)
   const [isGotOptions, setIsGotOptions] = useState(false)
   const [isMainEditorMounted, setIsMainEditorMounted] = useState(false)
-  const [currentScreen, setCurrentScreen] = useState<CurrentScreen>('main')
+  const [currentScreen, setCurrentScreen] = useState<CurrentScreen>('setting')
 
   function getOptions() {
     parent.postMessage(

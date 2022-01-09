@@ -2,25 +2,19 @@ import { css } from '@emotion/react'
 import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useEffect, useRef, useState } from 'react'
-import {
-  AllThemeType,
-  BuiltinThemeType,
-  Options,
-  PluginMessage,
-  PostMessage
-} from '@/@types/common'
+import { PostMessage } from '@/@types/common'
 import { CDN_URL, ONCHANGE_TIMER_DURATION } from '@/constants'
 import Store from '@/ui/Store'
 import IconPlay from '@/ui/assets/img/icon_play.inline.svg'
 import IconSetting from '@/ui/assets/img/icon_setting.inline.svg'
 import figmaTypings from '@/ui/assets/types/figma.dts'
 import Button from '@/ui/components/Button'
+import Divider from '@/ui/components/Divider'
 import HStack from '@/ui/components/HStack'
 import Loading from '@/ui/components/Loading'
 import Spacer from '@/ui/components/Spacer'
 import VStack from '@/ui/components/VStack'
 import { spacing } from '@/ui/styles'
-import { allTheme } from '@/ui/themeList'
 
 // change cdn url to custom builded monaco-editor
 loader.config({
@@ -229,6 +223,7 @@ const Main: React.FC = () => {
         height: 100%;
       `}
     >
+      {/* editor */}
       {isGotOptions && (
         <div
           css={css`
@@ -248,6 +243,9 @@ const Main: React.FC = () => {
         </div>
       )}
 
+      <Divider />
+
+      {/* bottom area */}
       <HStack
         css={css`
           padding: ${spacing[2]};
@@ -260,6 +258,7 @@ const Main: React.FC = () => {
 
         <Spacer x={spacing[2]} />
 
+        {/* documentation link */}
         <a
           href="https://www.figma.com/plugin-docs/api/api-reference/"
           target="_blank"

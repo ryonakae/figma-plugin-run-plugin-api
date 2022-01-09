@@ -12,12 +12,14 @@ import { CDN_URL } from '@/constants'
 import defaultOptions from '@/defaultOptions'
 import Store from '@/ui/Store'
 import IconBack from '@/ui/assets/img/icon_back.inline.svg'
+import IconChevronDown from '@/ui/assets/img/icon_chevron_down.inline.svg'
 import JSONSchemaEditorOptions from '@/ui/assets/types/editorOptions.schema.json'
 import Button from '@/ui/components/Button'
+import Divider from '@/ui/components/Divider'
 import HStack from '@/ui/components/HStack'
 import Spacer from '@/ui/components/Spacer'
 import VStack from '@/ui/components/VStack'
-import { color, spacing, size } from '@/ui/styles'
+import { color, spacing, size, radius } from '@/ui/styles'
 import { allTheme } from '@/ui/themeList'
 
 // change cdn url to custom builded monaco-editor
@@ -221,6 +223,7 @@ const Setting: React.FC = () => {
         height: 100%;
       `}
     >
+      {/* editor */}
       {isGotOptions && (
         <div
           css={css`
@@ -239,60 +242,83 @@ const Setting: React.FC = () => {
         </div>
       )}
 
-      <div
-        css={css`
-          width: 100%;
-          height: 1px;
-          background-color: ${color.border};
-        `}
-      />
+      <Divider />
 
+      {/* theme */}
       <HStack
         css={css`
           padding: ${spacing[2]};
         `}
       >
-        <div>Theme</div>
-        <Spacer stretch={true} />
-        <select
-          value={tmpTheme}
-          onChange={onSelectThemeChange}
+        <Spacer x={spacing[1]} />
+        <div
           css={css`
-            width: 50%;
-            height: ${size.select};
-            padding: 0 ${spacing[1]};
-            border: 1px solid ${color.border};
+            width: 33%;
           `}
         >
-          {Object.keys(allTheme).map((value, index) => (
-            <option key={index} value={value}>
-              {allTheme[value as keyof AllThemeType]}
-            </option>
-          ))}
-        </select>
+          Theme
+        </div>
+        <div
+          css={css`
+            position: relative;
+            flex: 1;
+            height: ${size.select};
+            border: 1px solid ${color.border};
+            border-radius: ${radius.select};
+            padding: 0 ${spacing[2]};
+          `}
+        >
+          <select
+            value={tmpTheme}
+            onChange={onSelectThemeChange}
+            css={css`
+              width: 100%;
+              height: 100%;
+              appearance: none;
+            `}
+          >
+            {Object.keys(allTheme).map((value, index) => (
+              <option key={index} value={value}>
+                {allTheme[value as keyof AllThemeType]}
+              </option>
+            ))}
+          </select>
+          <IconChevronDown
+            css={css`
+              position: absolute;
+              right: ${spacing[2]};
+              top: 50%;
+              transform: translateY(-50%);
+              pointer-events: none;
+              fill: ${color.disabled};
+            `}
+          />
+        </div>
       </HStack>
 
-      <div
-        css={css`
-          width: 100%;
-          height: 1px;
-          background-color: ${color.border};
-        `}
-      />
+      <Divider />
 
+      {/* bottom */}
       <HStack
         css={css`
           padding: ${spacing[2]};
         `}
       >
+        {/* back button */}
         <Button type="ghost" padding={false} onClick={onCloseClick}>
           <IconBack />
         </Button>
+
         <Spacer stretch={true} />
+
+        {/* reset button */}
         <Button type="border" onClick={onResetClick}>
           Reset to Default
         </Button>
+
         <Spacer x={spacing[2]} />
+
+        {/* apply button */}
         <Button
           type="primary"
           disabled={error.length > 0}

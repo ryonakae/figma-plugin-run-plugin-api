@@ -25,6 +25,7 @@ const Button: React.FC<ButtonProps> = ({
   let textColor!: string
   let activeBorderStyle!: string
   let hoverBackgroundColor!: string
+  let borderRadius!: string
 
   if (type === 'primary') {
     backgroundColor = disabled ? color.disabled : color.primary
@@ -32,18 +33,21 @@ const Button: React.FC<ButtonProps> = ({
     textColor = color.primaryButtonText
     activeBorderStyle = `2px solid ${color.primaryButtonActiveBorder}`
     hoverBackgroundColor = color.primary
+    borderRadius = radius.button
   } else if (type === 'border') {
     backgroundColor = 'transparent'
     borderColor = disabled ? color.disabled : color.borderButton
     textColor = disabled ? color.disabled : color.text
     activeBorderStyle = `2px solid ${color.primary}`
     hoverBackgroundColor = 'transparent'
+    borderRadius = radius.button
   } else if (type === 'ghost') {
     backgroundColor = 'transparent'
     borderColor = 'transparent'
     textColor = disabled ? color.disabled : color.text
     activeBorderStyle = `2px solid transparent`
     hoverBackgroundColor = color.ghostButtonHoverBg
+    borderRadius = radius.ghostButton
   }
 
   return (
@@ -51,7 +55,7 @@ const Button: React.FC<ButtonProps> = ({
       css={css`
         background-color: ${backgroundColor};
         border: 1px solid ${borderColor};
-        border-radius: ${radius.button};
+        border-radius: ${borderRadius};
         min-width: ${size.button};
         height: ${size.button};
         padding: ${padding ? `0 ${spacing[3]}` : 0};

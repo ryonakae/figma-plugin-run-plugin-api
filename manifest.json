@@ -1,6 +1,6 @@
 {
   "name": "Run Plugin API",
-  "id": "1060426031891010393",
+  "id": "1061937426144722953",
   "api": "1.0.0",
   "editorType": ["figma"],
   "main": "dist/code.js",

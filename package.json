@@ -1,6 +1,6 @@
 {
   "name": "figma-plugin-run-plugin-api",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": "Ryo Nakae",
   "dependencies": {
     "@emotion/react": "^11.7.1",

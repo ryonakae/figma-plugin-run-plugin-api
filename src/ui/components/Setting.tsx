@@ -13,7 +13,7 @@ import { CDN_URL, ONCHANGE_TIMER_DURATION } from '@/constants'
 import defaultOptions from '@/defaultOptions'
 import Store from '@/ui/Store'
 import IconBack from '@/ui/assets/img/icon_back.inline.svg'
-import JSONSchemaIStandaloneEditorConstructionOptions from '@/ui/assets/types/IStandaloneEditorConstructionOptions.schema.json'
+import JSONSchemaEditorOptions from '@/ui/assets/types/editorOptions.json'
 import figmaTypings from '@/ui/assets/types/figma.dts'
 import Button from '@/ui/components/Button'
 import HStack from '@/ui/components/HStack'
@@ -61,7 +61,7 @@ const Setting: React.FC = () => {
     // refに引数を入れて他の場所で参照できるようにする
     monacoRef.current = monaco
 
-    console.log(JSONSchemaIStandaloneEditorConstructionOptions)
+    console.log(JSONSchemaEditorOptions)
 
     monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
       validate: true,
@@ -69,7 +69,7 @@ const Setting: React.FC = () => {
         {
           uri: 'http://myserver/foo-schema.json',
           fileMatch: ['*'],
-          schema: JSONSchemaIStandaloneEditorConstructionOptions
+          schema: JSONSchemaEditorOptions
         }
       ]
     })

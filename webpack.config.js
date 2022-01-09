@@ -2,6 +2,7 @@
 const path = require('path')
 const HtmlInlineScriptWebpackPlugin = require('html-inline-script-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const { ProvidePlugin } = require('webpack')
 
 module.exports = (env, argv) =>
@@ -67,5 +68,22 @@ module.exports = (env, argv) =>
     ],
     externals: {
       ts: 'ts'
+    },
+    optimization: {
+      minimizer: [
+        new TerserPlugin({
+          parallel: true,
+          terserOptions: {
+            sourceMap: false,
+            warnings: false,
+            compress: {
+              pure_funcs: ['console.log', 'console.error', 'console.warn']
+            },
+            output: {
+              comments: /@license/i
+            }
+          }
+        })
+      ]
     }
   })

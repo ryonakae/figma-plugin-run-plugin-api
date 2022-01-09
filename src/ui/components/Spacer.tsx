@@ -15,7 +15,7 @@ const Spacer: React.FC<SpacerProps> = ({ x, y, stretch, ...delegated }) => {
   return (
     <div
       css={css`
-        background-color: rgba(255, 0, 0, 0.2);
+        /* background-color: rgba(255, 0, 0, 0.2); */
         width: ${width};
         height: ${height};
         flex: ${flex};

@@ -36,6 +36,7 @@ const Main: React.FC = () => {
     isGotOptions,
     isMainEditorMounted,
     setIsMainEditorMounted,
+    currentScreen,
     setCurrentScreen,
     updateTheme
   } = Store.useContainer()
@@ -102,7 +103,7 @@ const Main: React.FC = () => {
 
     // add keyboard shortcut for inside of editor
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, handler => {
-      console.log('cmd + enter pressed at inner of editor', handler)
+      console.log('CodeEditor cmd + enter pressed at inner of editor', handler)
       exec()
     })
 
@@ -191,7 +192,10 @@ const Main: React.FC = () => {
   }
 
   function exec() {
-    if (!editorRef.current) return
+    if (!editorRef.current || code.length === 0 || error.length > 0) {
+      console.log('exec aborted')
+      return
+    }
 
     console.log('exec')
 

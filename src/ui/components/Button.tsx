@@ -1,7 +1,7 @@
-import { Interpolation, Theme, css } from '@emotion/react'
+import { css } from '@emotion/react'
 import React from 'react'
 import HStack from '@/ui/components/HStack'
-import { typography, color, spacing, radius, size } from '@/ui/styles'
+import { color, spacing, radius, size } from '@/ui/styles'
 
 type ButtonProps = JSX.IntrinsicElements['div'] & {
   type?: 'primary' | 'border' | 'ghost'

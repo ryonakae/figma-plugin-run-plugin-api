@@ -1,5 +1,4 @@
 import { Monaco } from '@monaco-editor/react'
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { useState } from 'react'
 import { createContainer } from 'unstated-next'
 import {
@@ -115,21 +114,6 @@ function Store() {
 
     console.log('updateTheme finish')
   }
-
-  // function validateManually(
-  //   editor: monaco.editor.IStandaloneCodeEditor,
-  //   monaco: Monaco
-  // ) {
-  //   console.log('validateManually')
-
-  //   const editorUri = editor.getModel()?.uri
-
-  //   if (editorUri) {
-  //     const currentEditorHasMarkerChanges = uris.find(
-  //       uri => uri.path === editorUri.path
-  //     )
-  //   }
-  // }
 
   return {
     code,

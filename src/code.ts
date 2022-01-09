@@ -11,7 +11,7 @@ const CLIENT_STORAGE_KEY_NAME = 'run-plugin-api'
 
 function exec(msg: ExecMessage) {
   const jsCode = msg.code
-  console.clear()
+  // console.clear()
   eval(jsCode)
   setTimeout(() => {
     figma.notify('Code has been executed.')

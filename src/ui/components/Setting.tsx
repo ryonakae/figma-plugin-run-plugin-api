@@ -3,12 +3,7 @@ import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useEffect, useRef, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import {
-  AllThemeType,
-  Options,
-  PluginMessage,
-  PostMessage
-} from '@/@types/common'
+import { AllThemeType, Options, PostMessage } from '@/@types/common'
 import { CDN_URL } from '@/constants'
 import defaultOptions from '@/defaultOptions'
 import Store from '@/ui/Store'
@@ -39,6 +34,7 @@ const Setting: React.FC = () => {
     cursorPosition,
     theme,
     isGotOptions,
+    currentScreen,
     setCurrentScreen,
     updateTheme
   } = Store.useContainer()
@@ -53,7 +49,7 @@ const Setting: React.FC = () => {
     'ctrl+s, command+s',
     (event, handler) => {
       console.log('cmd + s pressed at outer of editor', event, handler)
-      onApplyClick()
+      applySettings()
     },
     {
       enableOnTags: ['INPUT', 'SELECT', 'TEXTAREA']
@@ -92,10 +88,16 @@ const Setting: React.FC = () => {
     // apply theme
     await updateTheme(monaco, theme)
 
-    // add keyboard shortcut for inside of editor
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, handler => {
-      console.log('cmd + s pressed at inner of editor', handler)
-      onApplyClick()
+    // cmd+enterを無効にしておく
+    // cmd+sはuseHotkeysで発動するので、monaco editorでは設定しなくていい
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, handler => {
+      console.log(
+        'SettingEditor cmd + enter pressed at inner of editor',
+        handler
+      )
+      ;(() => {
+        console.log('void')
+      })()
     })
 
     // focus editor
@@ -124,12 +126,13 @@ const Setting: React.FC = () => {
     setTmpTheme(newTheme)
   }
 
-  async function onApplyClick() {
-    if (!editorRef.current || !monacoRef.current) {
+  async function applySettings() {
+    if (!editorRef.current || !monacoRef.current || error.length > 0) {
+      console.log('applySettings aborted')
       return
     }
 
-    console.log('SettingEditor onApplyClick')
+    console.log('SettingEditor applySettings')
 
     const options = editorRef.current.getValue()
     const parsedOptions = JSON.parse(options)
@@ -345,7 +348,7 @@ const Setting: React.FC = () => {
         <Button
           type="primary"
           disabled={error.length > 0}
-          onClick={onApplyClick}
+          onClick={applySettings}
         >
           Apply Settings (Cmd + S)
         </Button>

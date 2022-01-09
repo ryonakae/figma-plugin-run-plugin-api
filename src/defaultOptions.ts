@@ -5,9 +5,9 @@ const defaultOptions: Options = {
     cursorBlinking: 'smooth',
     folding: false,
     fontFamily: 'Menlo, Monaco, "Courier New", monospace',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '400',
-    lineHeight: 19.2,
+    lineHeight: 17.6,
     formatOnPaste: true,
     formatOnType: true,
     glyphMargin: true,
@@ -19,14 +19,14 @@ const defaultOptions: Options = {
       enabled: false
     },
     padding: {
-      top: 20,
-      bottom: 20
+      top: 15,
+      bottom: 15
     },
     renderWhitespace: 'boundary',
     scrollBeyondLastColumn: 0,
     scrollBeyondLastLine: false,
     selectionHighlight: false,
-    suggestLineHeight: 17.5,
+    suggestLineHeight: 16.5,
     tabSize: 2,
     wordWrap: 'bounded'
   },

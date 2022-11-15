@@ -1,10 +1,9 @@
 import { css } from '@emotion/react'
-import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
+import ReactMonacoEditor, { Monaco } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useEffect, useRef, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { AllThemeType, Options, PostMessage } from '@/@types/common'
-import { CDN_URL } from '@/constants'
 import defaultOptions from '@/defaultOptions'
 import Store from '@/ui/Store'
 import IconBack from '@/ui/assets/img/icon_back.inline.svg'
@@ -17,14 +16,6 @@ import Spacer from '@/ui/components/Spacer'
 import VStack from '@/ui/components/VStack'
 import { color, spacing, size, radius } from '@/ui/styles'
 import { allTheme } from '@/ui/themeList'
-
-// change cdn url to custom builded monaco-editor
-loader.config({
-  paths: {
-    // vs: 'https://file.brdr.jp/figma-plugin-run-plugin-api/vs'
-    vs: CDN_URL + '/min/vs'
-  }
-})
 
 const Setting: React.FC = () => {
   const {

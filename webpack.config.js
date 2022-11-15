@@ -42,7 +42,7 @@ module.exports = (env, argv) =>
         },
         {
           test: /\.dts$/i,
-          use: 'raw-loader'
+          type: 'asset/source'
         }
       ]
     },

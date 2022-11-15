@@ -101,5 +101,5 @@ figma.ui.onmessage = (msg: PluginMessage) => {
 
 figma.showUI(__html__, {
   width: 500,
-  height: 300
+  height: 350
 })

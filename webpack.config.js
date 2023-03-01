@@ -23,7 +23,13 @@ module.exports = (env, argv) =>
       rules: [
         {
           test: /\.tsx?$/,
+          exclude: path.resolve(__dirname, 'src/ui/assets/types'),
           use: 'ts-loader'
+        },
+        {
+          test: /\.d.ts$/,
+          include: path.resolve(__dirname, 'src/ui/assets/types'),
+          type: 'asset/source'
         },
         {
           test: /\.css$/,
@@ -39,10 +45,6 @@ module.exports = (env, argv) =>
         {
           test: /\.jpe?g$|\.gif$|\.png$|^(?!.*\.inline\.svg$).*\.svg$/,
           type: 'asset/inline'
-        },
-        {
-          test: /\.dts$/i,
-          type: 'asset/source'
         }
       ]
     },

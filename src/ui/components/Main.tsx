@@ -8,7 +8,6 @@ import { ONCHANGE_TIMER_DURATION } from '@/constants'
 import Store from '@/ui/Store'
 import IconPlay from '@/ui/assets/img/icon_play.inline.svg'
 import IconSetting from '@/ui/assets/img/icon_setting.inline.svg'
-import figmaTypings from '@/ui/assets/types/figma.dts'
 import Button from '@/ui/components/Button'
 import Divider from '@/ui/components/Divider'
 import HStack from '@/ui/components/HStack'
@@ -16,6 +15,9 @@ import Loading from '@/ui/components/Loading'
 import Spacer from '@/ui/components/Spacer'
 import VStack from '@/ui/components/VStack'
 import { spacing } from '@/ui/styles'
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const figmaTypings = require('@/ui/assets/types/figma.d.ts')
 
 const Main: React.FC = () => {
   const {

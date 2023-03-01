@@ -40,10 +40,15 @@ const Main: React.FC = () => {
   const onChangeTimer = useRef(0)
   const onCursorPositionChangeTimer = useRef(0)
   const [error, setError] = useState<monaco.editor.IMarker[]>([])
+  const errorRef = useRef<monaco.editor.IMarker[]>([])
 
   // add keyboard shortcut for outside of editor
   useHotkeys('ctrl+enter, command+enter', (event, handler) => {
-    console.log('cmd + enter pressed at outer of editor', event, handler)
+    console.log(
+      'CodeEditor cmd + enter pressed at outer of editor',
+      event,
+      handler
+    )
     exec()
   })
 
@@ -186,7 +191,11 @@ const Main: React.FC = () => {
   }
 
   function exec() {
-    if (!editorRef.current || code.length === 0 || error.length > 0) {
+    if (
+      !editorRef.current ||
+      code.length === 0 ||
+      errorRef.current.length > 0
+    ) {
       console.log('exec aborted')
       return
     }
@@ -226,6 +235,10 @@ const Main: React.FC = () => {
       }
     }
   }, [])
+
+  useEffect(() => {
+    errorRef.current = error
+  }, [error])
 
   return (
     <VStack
@@ -284,7 +297,7 @@ const Main: React.FC = () => {
         <Button
           type="primary"
           onClick={exec}
-          disabled={code.length > 0 && error.length > 0}
+          disabled={code.length === 0 || error.length > 0}
         >
           <IconPlay />
           <Spacer x={spacing[2]} />

@@ -1,14 +1,13 @@
 import { css } from '@emotion/react'
-import ReactMonacoEditor, { Monaco, loader } from '@monaco-editor/react'
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
+import ReactMonacoEditor, { Monaco } from '@monaco-editor/react'
+import * as monaco from 'monaco-editor'
 import React, { useEffect, useRef, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { PostMessage } from '@/@types/common'
-import { CDN_URL, ONCHANGE_TIMER_DURATION } from '@/constants'
+import { ONCHANGE_TIMER_DURATION } from '@/constants'
 import Store from '@/ui/Store'
 import IconPlay from '@/ui/assets/img/icon_play.inline.svg'
 import IconSetting from '@/ui/assets/img/icon_setting.inline.svg'
-import figmaTypings from '@/ui/assets/types/figma.dts'
 import Button from '@/ui/components/Button'
 import Divider from '@/ui/components/Divider'
 import HStack from '@/ui/components/HStack'
@@ -17,13 +16,8 @@ import Spacer from '@/ui/components/Spacer'
 import VStack from '@/ui/components/VStack'
 import { spacing } from '@/ui/styles'
 
-// change cdn url to custom builded monaco-editor
-loader.config({
-  paths: {
-    // vs: 'https://file.brdr.jp/figma-plugin-run-plugin-api/vs'
-    vs: CDN_URL + '/min/vs'
-  }
-})
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const figmaTypings = require('@/ui/assets/types/figma.d.ts')
 
 const Main: React.FC = () => {
   const {
@@ -46,10 +40,15 @@ const Main: React.FC = () => {
   const onChangeTimer = useRef(0)
   const onCursorPositionChangeTimer = useRef(0)
   const [error, setError] = useState<monaco.editor.IMarker[]>([])
+  const errorRef = useRef<monaco.editor.IMarker[]>([])
 
   // add keyboard shortcut for outside of editor
   useHotkeys('ctrl+enter, command+enter', (event, handler) => {
-    console.log('cmd + enter pressed at outer of editor', event, handler)
+    console.log(
+      'CodeEditor cmd + enter pressed at outer of editor',
+      event,
+      handler
+    )
     exec()
   })
 
@@ -192,7 +191,11 @@ const Main: React.FC = () => {
   }
 
   function exec() {
-    if (!editorRef.current || code.length === 0 || error.length > 0) {
+    if (
+      !editorRef.current ||
+      code.length === 0 ||
+      errorRef.current.length > 0
+    ) {
       console.log('exec aborted')
       return
     }
@@ -232,6 +235,10 @@ const Main: React.FC = () => {
       }
     }
   }, [])
+
+  useEffect(() => {
+    errorRef.current = error
+  }, [error])
 
   return (
     <VStack
@@ -290,7 +297,7 @@ const Main: React.FC = () => {
         <Button
           type="primary"
           onClick={exec}
-          disabled={code.length > 0 && error.length > 0}
+          disabled={code.length === 0 || error.length > 0}
         >
           <IconPlay />
           <Spacer x={spacing[2]} />

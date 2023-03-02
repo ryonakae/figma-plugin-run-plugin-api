@@ -1,11 +1,20 @@
 import { css, Global } from '@emotion/react'
+import { loader } from '@monaco-editor/react'
 import React, { useEffect } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import 'ress'
+import { CDN_URL } from '@/constants'
 import Store from '@/ui/Store'
 import Main from '@/ui/components/Main'
 import Setting from '@/ui/components/Setting'
 import { typography, color } from '@/ui/styles'
+
+// change cdn url to custom builded monaco-editor
+loader.config({
+  paths: {
+    vs: CDN_URL + '/min/vs'
+  }
+})
 
 const AppContent: React.FC = () => {
   const { getOptions, listenPluginMessage, closePlugin, currentScreen } =

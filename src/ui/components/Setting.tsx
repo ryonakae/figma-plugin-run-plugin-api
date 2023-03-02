@@ -330,7 +330,7 @@ const Setting: React.FC = () => {
 
         {/* option link */}
         <a
-          href="https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html"
+          href="https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html"
           target="_blank"
           rel="noreferrer"
         >

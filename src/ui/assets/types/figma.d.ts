@@ -22,6 +22,7 @@ interface PluginAPI {
   readonly currentUser: User | null
   readonly activeUsers: ActiveUser[]
   readonly textreview?: TextReviewAPI
+  readonly payments?: PaymentsAPI
   closePlugin(message?: string): void
   notify(message: string, options?: NotificationOptions): NotificationHandler
   commitUndo(): void
@@ -76,6 +77,7 @@ interface PluginAPI {
   createShapeWithText(): ShapeWithTextNode
   createCodeBlock(): CodeBlockNode
   createSection(): SectionNode
+  createTable(numRows?: number, numColumns?: number): TableNode
   createNodeFromJSXAsync(jsx: any): Promise<SceneNode>
   createBooleanOperation(): BooleanOperationNode
   createPaintStyle(): PaintStyle
@@ -149,6 +151,18 @@ interface PluginAPI {
 interface VersionHistoryResult {
   id: string
 }
+declare type PaymentStatus = {
+  type: 'UNPAID' | 'PAID' | 'NOT_SUPPORTED'
+}
+interface PaymentsAPI {
+  readonly status: PaymentStatus
+  setPaymentStatusInDevelopment(status: PaymentStatus): void
+  getUserFirstRanSecondsAgo(): number
+  initiateCheckoutAsync(options?: {
+    interstitial?: 'PAID_FEATURE' | 'TRIAL_ENDED' | 'SKIP'
+  }): Promise<void>
+  requestCheckout(): void
+}
 interface ClientStorageAPI {
   getAsync(key: string): Promise<any | undefined>
   setAsync(key: string, value: any): Promise<void>
@@ -190,6 +204,7 @@ interface UIAPI {
   show(): void
   hide(): void
   resize(width: number, height: number): void
+  reposition(x: number, y: number): void
   close(): void
   postMessage(pluginMessage: any, options?: UIPostMessageOptions): void
   onmessage: MessageEventHandler | undefined
@@ -480,7 +495,13 @@ interface FontName {
   readonly family: string
   readonly style: string
 }
-declare type TextCase = 'ORIGINAL' | 'UPPER' | 'LOWER' | 'TITLE'
+declare type TextCase =
+  | 'ORIGINAL'
+  | 'UPPER'
+  | 'LOWER'
+  | 'TITLE'
+  | 'SMALL_CAPS'
+  | 'SMALL_CAPS_FORCED'
 declare type TextDecoration = 'NONE' | 'UNDERLINE' | 'STRIKETHROUGH'
 interface ArcData {
   readonly startingAngle: number
@@ -723,7 +744,26 @@ declare type Action =
     }
   | {
       readonly type: 'UPDATE_MEDIA_RUNTIME'
-      readonly mediaAction: 'PLAY' | 'PAUSE' | 'TOGGLE_PLAY_PAUSE'
+      readonly destinationId: string | null
+      readonly mediaAction:
+        | 'PLAY'
+        | 'PAUSE'
+        | 'TOGGLE_PLAY_PAUSE'
+        | 'MUTE'
+        | 'UNMUTE'
+        | 'TOGGLE_MUTE_UNMUTE'
+    }
+  | {
+      readonly type: 'UPDATE_MEDIA_RUNTIME'
+      readonly destinationId?: string | null
+      readonly mediaAction: 'SKIP_FORWARD' | 'SKIP_BACKWARD'
+      readonly amountToSkip: number
+    }
+  | {
+      readonly type: 'UPDATE_MEDIA_RUNTIME'
+      readonly destinationId?: string | null
+      readonly mediaAction: 'SKIP_TO'
+      readonly newTimestamp: number
     }
   | {
       readonly type: 'NODE'
@@ -763,6 +803,13 @@ declare type Trigger =
       readonly type: 'ON_KEY_DOWN'
       readonly device: 'KEYBOARD' | 'XBOX_ONE' | 'PS4' | 'SWITCH_PRO' | 'UNKNOWN_CONTROLLER'
       readonly keyCodes: ReadonlyArray<number>
+    }
+  | {
+      readonly type: 'ON_MEDIA_HIT'
+      readonly mediaHitTime: number
+    }
+  | {
+      readonly type: 'ON_MEDIA_END'
     }
 declare type Navigation = 'NAVIGATE' | 'SWAP' | 'OVERLAY' | 'SCROLL_TO' | 'CHANGE_TO'
 interface Easing {
@@ -858,7 +905,7 @@ interface SceneNodeMixin {
   readonly attachedConnectors: ConnectorNode[]
   componentPropertyReferences:
     | {
-        [nodeProperty in 'visible' | 'characters' | 'mainComponent']: string
+        [nodeProperty in 'visible' | 'characters' | 'mainComponent']?: string
       }
     | null
 }
@@ -885,17 +932,19 @@ interface ChildrenMixin {
 interface ConstraintMixin {
   constraints: Constraints
 }
-interface LayoutMixin {
-  readonly absoluteTransform: Transform
-  relativeTransform: Transform
+interface DimensionAndPositionMixin {
   x: number
   y: number
-  rotation: number
   readonly width: number
   readonly height: number
-  readonly absoluteRenderBounds: Rect | null
+  relativeTransform: Transform
+  readonly absoluteTransform: Transform
   readonly absoluteBoundingBox: Rect | null
+}
+interface LayoutMixin extends DimensionAndPositionMixin {
+  readonly absoluteRenderBounds: Rect | null
   constrainProportions: boolean
+  rotation: number
   layoutAlign: 'MIN' | 'CENTER' | 'MAX' | 'STRETCH' | 'INHERIT'
   layoutGrow: number
   layoutPositioning: 'AUTO' | 'ABSOLUTE'
@@ -910,6 +959,8 @@ interface BlendMixin extends MinimalBlendMixin {
 }
 interface ContainerMixin {
   expanded: boolean
+}
+interface DeprecatedBackgroundMixin {
   backgrounds: ReadonlyArray<Paint>
   backgroundStyleId: string
 }
@@ -993,6 +1044,7 @@ interface BaseFrameMixin
     SceneNodeMixin,
     ChildrenMixin,
     ContainerMixin,
+    DeprecatedBackgroundMixin,
     GeometryMixin,
     CornerMixin,
     RectangleCornerMixin,
@@ -1021,15 +1073,11 @@ interface BaseFrameMixin
   guides: ReadonlyArray<Guide>
 }
 interface DefaultFrameMixin extends BaseFrameMixin, FramePrototypingMixin, ReactionMixin {}
-interface OpaqueNodeMixin extends BaseNodeMixin, SceneNodeMixin, ExportMixin {
-  readonly absoluteTransform: Transform
-  relativeTransform: Transform
-  x: number
-  y: number
-  readonly width: number
-  readonly height: number
-  readonly absoluteBoundingBox: Rect | null
-}
+interface OpaqueNodeMixin
+  extends BaseNodeMixin,
+    SceneNodeMixin,
+    ExportMixin,
+    DimensionAndPositionMixin {}
 interface MinimalBlendMixin {
   opacity: number
   blendMode: BlendMode
@@ -1156,6 +1204,7 @@ interface GroupNode
     ReactionMixin,
     ChildrenMixin,
     ContainerMixin,
+    DeprecatedBackgroundMixin,
     BlendMixin,
     LayoutMixin,
     ExportMixin {
@@ -1268,11 +1317,14 @@ interface InstanceNode extends DefaultFrameMixin, VariantMixin {
   }[]
   resetOverrides(): void
 }
-interface BooleanOperationNode extends DefaultShapeMixin, ChildrenMixin, CornerMixin {
+interface BooleanOperationNode
+  extends DefaultShapeMixin,
+    ChildrenMixin,
+    CornerMixin,
+    ContainerMixin {
   readonly type: 'BOOLEAN_OPERATION'
   clone(): BooleanOperationNode
   booleanOperation: 'UNION' | 'INTERSECT' | 'SUBTRACT' | 'EXCLUDE'
-  expanded: boolean
 }
 interface StickyNode extends OpaqueNodeMixin, MinimalFillsMixin, MinimalBlendMixin {
   readonly type: 'STICKY'
@@ -1285,6 +1337,31 @@ interface StampNode extends DefaultShapeMixin, ConstraintMixin, StickableMixin {
   readonly type: 'STAMP'
   clone(): StampNode
   getAuthorAsync(): Promise<BaseUser | null>
+}
+interface TableNode extends OpaqueNodeMixin, MinimalFillsMixin, MinimalBlendMixin {
+  readonly type: 'TABLE'
+  clone(): TableNode
+  readonly numRows: number
+  readonly numColumns: number
+  cellAt(rowIndex: number, columnIndex: number): TableCellNode
+  insertRow(rowIndex: number): void
+  insertColumn(columnIndex: number): void
+  removeRow(rowIndex: number): void
+  removeColumn(columnIndex: number): void
+  moveRow(fromIndex: number, toIndex: number): void
+  moveColumn(fromIndex: number, toIndex: number): void
+  resizeRow(rowIndex: number, height: number): void
+  resizeColumn(columnIndex: number, width: number): void
+}
+interface TableCellNode extends MinimalFillsMixin {
+  readonly type: 'TABLE_CELL'
+  readonly text: TextSublayerNode
+  readonly rowIndex: number
+  readonly columnIndex: number
+  readonly toString: string
+  readonly parent: TableNode
+  readonly height: number
+  readonly width: number
 }
 interface HighlightNode
   extends DefaultShapeMixin,
@@ -1457,12 +1534,9 @@ declare type SceneNode =
   | SectionNode
   | HighlightNode
   | WashiTapeNode
-
-type NodeType = BaseNode['type']
-
-////////////////////////////////////////////////////////////////////////////////
-// Styles
-type StyleType = 'PAINT' | 'TEXT' | 'EFFECT' | 'GRID'
+  | TableNode
+declare type NodeType = BaseNode['type']
+declare type StyleType = 'PAINT' | 'TEXT' | 'EFFECT' | 'GRID'
 declare type InheritedStyleField =
   | 'fillStyleId'
   | 'strokeStyleId'
@@ -1475,7 +1549,6 @@ interface StyleConsumers {
   node: SceneNode
   fields: InheritedStyleField[]
 }
-
 interface BaseStyle extends PublishableMixin, PluginDataMixin {
   readonly id: string
   readonly type: StyleType

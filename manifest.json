@@ -2,7 +2,7 @@
   "name": "Run Plugin API",
   "id": "1061937426144722953",
   "api": "1.0.0",
-  "editorType": ["figma"],
+  "editorType": ["figma", "figjam"],
   "main": "dist/code.js",
   "ui": "dist/ui.html",
   "relaunchButtons": [

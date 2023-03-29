@@ -187,7 +187,11 @@ const Main: React.FC = () => {
 
   function onValidate(markers: monaco.editor.IMarker[]) {
     console.log('CodeEditor onValidate', markers)
-    setError(markers)
+
+    // severityが8のものだけをerrorに入れる
+    const errors = markers.filter(marker => marker.severity === 8)
+
+    setError(errors)
   }
 
   function exec() {

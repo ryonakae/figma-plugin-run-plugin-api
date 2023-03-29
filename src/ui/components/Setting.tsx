@@ -103,7 +103,11 @@ const Setting: React.FC = () => {
 
   function onValidate(markers: monaco.editor.IMarker[]) {
     console.log('SettingEditor onValidate', markers)
-    setError(markers)
+
+    // severityが8のものだけをerrorに入れる
+    const errors = markers.filter(marker => marker.severity === 8)
+
+    setError(errors)
   }
 
   async function onSelectThemeChange(

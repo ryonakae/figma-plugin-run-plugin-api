@@ -256,6 +256,8 @@ const Main: React.FC = () => {
         <div
           css={css`
             flex: 1;
+            overflow: hidden;
+            flex-grow: 1;
           `}
         >
           <ReactMonacoEditor

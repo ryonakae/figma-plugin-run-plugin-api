@@ -32,9 +32,6 @@ const Corner: React.FC = () => {
     <>
       <Global
         styles={css`
-        * {
-          overflow: hidden;
-        }
         #corner{
           position: fixed;
           right: 1px;

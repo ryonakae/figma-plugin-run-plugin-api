@@ -8,6 +8,7 @@ import Store from '@/ui/Store'
 import Main from '@/ui/components/Main'
 import Setting from '@/ui/components/Setting'
 import { typography, color } from '@/ui/styles'
+import Corner from './components/Corner'
 
 // change cdn url to custom builded monaco-editor
 loader.config({
@@ -70,6 +71,7 @@ const AppContent: React.FC = () => {
       />
       {currentScreen === 'main' && <Main />}
       {currentScreen === 'setting' && <Setting />}
+      <Corner />
     </>
   )
 }

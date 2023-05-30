@@ -37,6 +37,13 @@ type NotifyMessage = {
   message: string
   options?: NotificationOptions
 }
+type ResizeMessage = {
+  type: 'resize'
+  size: {
+    width: number
+    height: number
+  }
+}
 
 type PluginMessage =
   | ClosePluginMessage
@@ -45,6 +52,7 @@ type PluginMessage =
   | SetOptionsMessage
   | ExecMessage
   | NotifyMessage
+  | ResizeMessage
 
 type PostMessage = {
   pluginMessage: PluginMessage

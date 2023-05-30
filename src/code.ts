@@ -3,6 +3,7 @@ import {
   NotifyMessage,
   Options,
   PluginMessage,
+  ResizeMessage,
   SetOptionsMessage
 } from '@/@types/common'
 import defaultOptions from '@/defaultOptions'
@@ -72,6 +73,10 @@ function notify(msg: NotifyMessage) {
   figma.notify(message, options)
 }
 
+function resizeWindow(msg: ResizeMessage) {
+  figma.ui.resize(msg.size.width, msg.size.height)
+}
+
 figma.ui.onmessage = (msg: PluginMessage) => {
   switch (msg.type) {
     case 'exec':
@@ -93,6 +98,10 @@ figma.ui.onmessage = (msg: PluginMessage) => {
     case 'notify':
       notify(msg)
       break
+
+    case 'resize':
+      resizeWindow(msg)
+      break;
 
     default:
       break

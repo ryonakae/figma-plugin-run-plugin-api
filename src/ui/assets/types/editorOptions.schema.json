@@ -8164,7 +8164,7 @@
         },
         "Promise<FontFaceSet>": {
             "properties": {
-                "__@toStringTag@10630": {
+                "__@toStringTag@10034": {
                     "type": "string"
                 }
             },
@@ -8172,7 +8172,7 @@
         },
         "Promise<ServiceWorkerRegistration>": {
             "properties": {
-                "__@toStringTag@10630": {
+                "__@toStringTag@10034": {
                     "type": "string"
                 }
             },

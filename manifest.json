@@ -11,5 +11,18 @@
       "name": "Open Run Plugin API",
       "multipleSelection": true
     }
-  ]
+  ],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["*"],
+    "reasoning": ""
+  },
+  "permissions": [
+    "activeusers",
+    "currentuser",
+    "fileusers",
+    "payments",
+    "teamlibrary"
+  ],
+  "capabilities": ["textreview", "codegen", "inspect", "vscode"]
 }

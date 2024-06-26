@@ -2,7 +2,7 @@
   "name": "Run Plugin API",
   "id": "1061937426144722953",
   "api": "1.0.0",
-  "editorType": ["figma", "figjam"],
+  "editorType": ["figma", "figjam", "dev"],
   "main": "dist/code.js",
   "ui": "dist/ui.html",
   "relaunchButtons": [
@@ -15,7 +15,7 @@
   "documentAccess": "dynamic-page",
   "networkAccess": {
     "allowedDomains": ["*"],
-    "reasoning": ""
+    "reasoning": "To allow network requests for plugins."
   },
   "permissions": [
     "activeusers",
@@ -24,5 +24,6 @@
     "payments",
     "teamlibrary"
   ],
-  "capabilities": ["textreview", "codegen", "inspect", "vscode"]
+  "capabilities": ["textreview", "codegen", "inspect", "vscode"],
+  "codegenLanguages": [{ "label": "CSS", "value": "css" }]
 }

@@ -53,12 +53,14 @@ async function setOptions(msg: SetOptionsMessage) {
   // clientStorageからオプションを取得
   const currentOptions: Options | undefined =
     await figma.clientStorage.getAsync(CLIENT_STORAGE_KEY_NAME)
+  console.log('currentOptions', currentOptions)
 
   // uiから送られてきた値とマージ
   const newOptions: Options = {
     ...(currentOptions || defaultOptions),
     ...msg.options
   }
+  console.log('newOptions', newOptions)
 
   // clientStorageに保存
   await figma.clientStorage.setAsync(CLIENT_STORAGE_KEY_NAME, newOptions)
@@ -100,8 +102,8 @@ figma.ui.onmessage = (msg: PluginMessage) => {
 }
 
 figma.showUI(__html__, {
-  width: 500,
-  height: 350
+  width: 600,
+  height: 450
 })
 
 // 右パネルに起動ボタンを表示

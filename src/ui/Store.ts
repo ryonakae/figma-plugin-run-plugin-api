@@ -23,6 +23,9 @@ function Store() {
     defaultOptions.cursorPosition
   )
   const [theme, setTheme] = useState(defaultOptions.theme)
+  const [ignoreErrorsOnExec, setIgnoreErrorsOnExec] = useState(
+    defaultOptions.ignoreErrorsOnExec
+  )
   const [isGotOptions, setIsGotOptions] = useState(false)
   const [isMainEditorMounted, setIsMainEditorMounted] = useState(false)
   const [currentScreen, setCurrentScreen] = useState<CurrentScreen>('main')
@@ -44,6 +47,7 @@ function Store() {
     setEditorOptions(options.editorOptions)
     setCursorPosition(options.cursorPosition)
     setTheme(options.theme)
+    setIgnoreErrorsOnExec(options.ignoreErrorsOnExec)
 
     setIsGotOptions(true)
   }
@@ -124,6 +128,8 @@ function Store() {
     setCursorPosition,
     theme,
     setTheme,
+    ignoreErrorsOnExec,
+    setIgnoreErrorsOnExec,
     isGotOptions,
     setIsGotOptions,
     isMainEditorMounted,

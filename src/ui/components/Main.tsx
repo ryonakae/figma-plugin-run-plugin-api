@@ -305,7 +305,7 @@ const Main: React.FC = () => {
         >
           <IconPlay />
           <Spacer x={spacing[2]} />
-          <div>Run Code (Cmd + Enter)</div>
+          <div>Run code (Cmd + Enter)</div>
         </Button>
       </HStack>
 

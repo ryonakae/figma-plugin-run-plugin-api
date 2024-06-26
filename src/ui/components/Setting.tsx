@@ -135,9 +135,11 @@ const Setting: React.FC = () => {
     // stateに値を保存して、エディタに設定を反映
     setEditorOptions(parsedOptions)
     editorRef.current.updateOptions(parsedOptions)
+    console.log('parsedOptions', parsedOptions)
 
     // テーマを反映
     await updateTheme(monacoRef.current, tmpTheme)
+    console.log('tmpTheme', tmpTheme)
 
     // local storageに設定を保存
     parent.postMessage(
@@ -148,7 +150,7 @@ const Setting: React.FC = () => {
             editorOptions,
             code,
             cursorPosition,
-            theme
+            theme: tmpTheme
           }
         }
       } as PostMessage,
@@ -270,7 +272,7 @@ const Setting: React.FC = () => {
         <Spacer x={spacing[1]} />
         <div
           css={css`
-            width: 33%;
+            flex: 1;
           `}
         >
           Theme
@@ -278,7 +280,7 @@ const Setting: React.FC = () => {
         <div
           css={css`
             position: relative;
-            flex: 1;
+            width: 35%;
             height: ${size.select};
             border: 1px solid ${color.select};
             border-radius: ${radius.select};
@@ -317,6 +319,43 @@ const Setting: React.FC = () => {
         </div>
       </HStack>
 
+      {/* ignoreErrorsOnExec */}
+      <HStack
+        css={css`
+          padding: ${spacing[2]};
+        `}
+      >
+        <Spacer x={spacing[1]} />
+        <div
+          css={css`
+            flex: 1;
+          `}
+        >
+          Ignore errors when run code
+        </div>
+        <input
+          type="checkbox"
+          css={css`
+            appearance: none;
+            width: ${size.checkbox};
+            height: ${size.checkbox};
+            display: inline-flex;
+
+            &:after {
+              content: '';
+              display: inline-flex;
+              width: ${size.checkbox};
+              height: ${size.checkbox};
+              border-radius: ${radius.checkbox};
+              box-sizing: border-box;
+              background-color: ${color.bg};
+              border: 1px solid ${color.icon};
+              box-shadow: none;
+            }
+          `}
+        />
+      </HStack>
+
       <Divider />
 
       {/* bottom */}
@@ -345,7 +384,7 @@ const Setting: React.FC = () => {
 
         {/* reset button */}
         <Button type="border" onClick={onResetClick}>
-          Reset to Default
+          Reset to default
         </Button>
 
         <Spacer x={spacing[2]} />
@@ -356,7 +395,7 @@ const Setting: React.FC = () => {
           disabled={error.length > 0}
           onClick={applySettings}
         >
-          Apply Settings (Cmd + S)
+          Apply settings (Cmd + S)
         </Button>
       </HStack>
     </VStack>

@@ -35,8 +35,7 @@ const defaultOptions: Options = {
     lineNumber: 2,
     column: 0
   },
-  theme: 'light',
-  ignoreErrorsOnExec: false
+  theme: 'light'
 }
 
 export default defaultOptions

@@ -10,7 +10,6 @@ type Options = {
   code: string
   cursorPosition: monaco.IPosition | monaco.Position
   theme: keyof AllThemeType
-  ignoreErrorsOnExec: boolean
 }
 
 type CurrentScreen = 'main' | 'setting'

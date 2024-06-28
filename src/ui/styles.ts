@@ -20,13 +20,11 @@ export const color = {
   primaryButtonActiveBorder: 'rgba(0, 0, 0, 0.3)',
   ghostButtonHoverBg: 'rgba(0, 0, 0, 0.06)',
   select: '#e5e5e5',
-  selectHover: '#ccc',
-  icon: '#000000e5'
+  selectHover: '#ccc'
 }
 
 export const radius = {
   select: '2px',
-  checkbox: '2px',
   button: '6px',
   ghostButton: '2px'
 }
@@ -47,8 +45,7 @@ export const spacing = {
 
 export const size = {
   button: '32px',
-  select: '28px',
-  checkbox: '20px'
+  select: '28px'
 }
 
 export const zIndex = {

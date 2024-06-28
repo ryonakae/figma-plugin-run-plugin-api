@@ -17,13 +17,7 @@
     "allowedDomains": ["*"],
     "reasoning": "To allow network requests for plugins."
   },
-  "permissions": [
-    "activeusers",
-    "currentuser",
-    "fileusers",
-    "payments",
-    "teamlibrary"
-  ],
+  "permissions": ["activeusers", "currentuser", "fileusers", "teamlibrary"],
   "capabilities": ["textreview", "codegen", "inspect", "vscode"],
   "codegenLanguages": [{ "label": "CSS", "value": "css" }]
 }

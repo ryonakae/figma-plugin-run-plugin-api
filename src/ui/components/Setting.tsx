@@ -135,9 +135,11 @@ const Setting: React.FC = () => {
     // stateに値を保存して、エディタに設定を反映
     setEditorOptions(parsedOptions)
     editorRef.current.updateOptions(parsedOptions)
+    console.log('parsedOptions', parsedOptions)
 
     // テーマを反映
     await updateTheme(monacoRef.current, tmpTheme)
+    console.log('tmpTheme', tmpTheme)
 
     // local storageに設定を保存
     parent.postMessage(
@@ -148,7 +150,7 @@ const Setting: React.FC = () => {
             editorOptions,
             code,
             cursorPosition,
-            theme
+            theme: tmpTheme
           }
         }
       } as PostMessage,
@@ -270,7 +272,7 @@ const Setting: React.FC = () => {
         <Spacer x={spacing[1]} />
         <div
           css={css`
-            width: 33%;
+            flex: 1;
           `}
         >
           Theme
@@ -278,7 +280,7 @@ const Setting: React.FC = () => {
         <div
           css={css`
             position: relative;
-            flex: 1;
+            width: 35%;
             height: ${size.select};
             border: 1px solid ${color.select};
             border-radius: ${radius.select};

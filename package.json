@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.7.2",
-    "@figma/plugin-typings": "^1.85.0",
+    "@figma/plugin-typings": "^1.97.0",
     "@svgr/webpack": "^6.1.2",
     "@types/node": "^17.0.8",
     "@types/react": "^17.0.33",
@@ -54,7 +54,8 @@
     "generate-editor-options": "typescript-json-schema node_modules/monaco-editor/esm/vs/editor/editor.api.d.ts editor.IStandaloneEditorConstructionOptions --ignoreErrors --excludePrivate --out src/ui/assets/types/editorOptions.schema.json",
     "generate-figma-dts": "dts-generator --project node_modules/@figma/plugin-typings --out src/ui/assets/types/figma.d.ts",
     "lint-fix": "yarn lint:prettier --write && yarn lint:eslint --fix",
-    "lint:eslint": "eslint --ext .ts,.tsx . --ignore-path .gitignore",
-    "lint:prettier": "prettier --check . --ignore-path .gitignore"
+    "lint:eslint": "eslint --ext .ts,.tsx .",
+    "lint:prettier": "prettier --check . --ignore-path .prettierignore",
+    "prepare": "husky install"
   }
 }

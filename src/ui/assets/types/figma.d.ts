@@ -1212,6 +1212,9 @@ declare type MaskType = 'ALPHA' | 'VECTOR' | 'LUMINANCE'
 interface Font {
   fontName: FontName
 }
+declare type TextStyleOverrideType = {
+  type: 'SEMANTIC_ITALIC' | 'SEMANTIC_WEIGHT' | 'HYPERLINK' | 'TEXT_DECORATION'
+}
 interface StyledTextSegment {
   characters: string
   start: number
@@ -1238,6 +1241,7 @@ interface StyledTextSegment {
       'paragraphSpacing' | 'paragraphIndent'
     >]?: VariableAlias
   }
+  textStyleOverrides: TextStyleOverrideType[]
 }
 declare type Reaction = {
   action?: Action

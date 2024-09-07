@@ -27,7 +27,8 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-explicit-any': 'warn',
     'import/order': ['error', { alphabetize: { order: 'asc' } }],
-    'import/no-unresolved': 'warn'
+    'import/no-unresolved': 'warn',
+    'react/no-unknown-property': ['error', { ignore: ['css'] }]
   },
   settings: {
     'import/parsers': {

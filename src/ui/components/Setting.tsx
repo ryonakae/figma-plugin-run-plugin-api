@@ -347,7 +347,7 @@ const Setting: React.FC = () => {
 
         {/* reset button */}
         <Button type="border" onClick={onResetClick}>
-          Reset to Default
+          Reset to default
         </Button>
 
         <Spacer x={spacing[2]} />
@@ -358,7 +358,7 @@ const Setting: React.FC = () => {
           disabled={error.length > 0}
           onClick={applySettings}
         >
-          Apply Settings (Cmd + S)
+          Apply settings (Cmd + S)
         </Button>
       </HStack>
     </VStack>

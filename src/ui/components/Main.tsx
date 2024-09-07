@@ -195,11 +195,7 @@ const Main: React.FC = () => {
   }
 
   function exec() {
-    if (
-      !editorRef.current ||
-      code.length === 0 ||
-      errorRef.current.length > 0
-    ) {
+    if (!editorRef.current || code.length === 0) {
       console.log('exec aborted')
       return
     }
@@ -298,14 +294,10 @@ const Main: React.FC = () => {
         <Spacer stretch={true} />
 
         {/* exec button */}
-        <Button
-          type="primary"
-          onClick={exec}
-          disabled={code.length === 0 || error.length > 0}
-        >
+        <Button type="primary" onClick={exec} disabled={code.length === 0}>
           <IconPlay />
           <Spacer x={spacing[2]} />
-          <div>Run Code (Cmd + Enter)</div>
+          <div>Run code (Cmd + Enter)</div>
         </Button>
       </HStack>
 

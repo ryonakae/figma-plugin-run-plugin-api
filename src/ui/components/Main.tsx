@@ -1,6 +1,7 @@
+import { get } from 'http'
 import { css } from '@emotion/react'
 import ReactMonacoEditor, { Monaco } from '@monaco-editor/react'
-import * as monaco from 'monaco-editor'
+import type * as monaco from 'monaco-editor'
 import React, { useEffect, useRef, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { PostMessage } from '@/@types/common'
@@ -30,7 +31,6 @@ const Main: React.FC = () => {
     isGotOptions,
     isMainEditorMounted,
     setIsMainEditorMounted,
-    currentScreen,
     setCurrentScreen,
     updateTheme
   } = Store.useContainer()
@@ -52,6 +52,17 @@ const Main: React.FC = () => {
     exec()
   })
 
+  function getCompilerOptions(monaco: Monaco) {
+    const compilerOptions: monaco.languages.typescript.CompilerOptions = {
+      target: monaco.languages.typescript.ScriptTarget.ESNext,
+      module: monaco.languages.typescript.ModuleKind.ESNext,
+      allowNonTsExtensions: true,
+      noEmit: true
+    }
+
+    return compilerOptions
+  }
+
   function beforeMount(monaco: Monaco) {
     console.log('CodeEditor beforeMount', monaco)
 
@@ -59,22 +70,22 @@ const Main: React.FC = () => {
     monacoRef.current = monaco
 
     // validation settings
-    monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: true,
-      noSyntaxValidation: false
+    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: false,
+      noSyntaxValidation: false,
+      // エラーコード1375（top level await）を無視するように設定
+      diagnosticCodesToIgnore: [1375]
     })
 
     // compiler options
-    monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-      target: monaco.languages.typescript.ScriptTarget.ESNext,
-      allowNonTsExtensions: true,
-      noEmit: true
-    })
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
+      getCompilerOptions(monaco)
+    )
 
     // add external libraries (figma typings)
     const libSource = figmaTypings
     const libUri = 'ts:filename/figma.d.ts'
-    monaco.languages.typescript.javascriptDefaults.addExtraLib(
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(
       libSource,
       libUri
     )
@@ -202,10 +213,18 @@ const Main: React.FC = () => {
 
     console.log('exec')
 
-    const tsCode = editorRef.current.getValue()
-    console.log(tsCode)
-    const jsCode = ts.transpile(tsCode)
-    console.log(jsCode)
+    // エディタの現在の値をasync関数に入れる
+    const tsCode = `
+      (async () => {
+        ${editorRef.current.getValue()}
+      })();
+    `
+    console.log('tsCode', tsCode)
+    const jsCode = ts.transpile(
+      tsCode,
+      getCompilerOptions(monacoRef.current as Monaco)
+    )
+    console.log('jsCode', jsCode)
 
     parent.postMessage(
       {
